@@ -1,0 +1,649 @@
+<!doctype html>
+<html lang="th">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>Maison Roru ICS</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans+Thai:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500;600&display=swap">
+<style>
+  :root{
+    --bg:#F4F6F9; --surface:#FFFFFF; --sunken:#EEF1F5; --ink:#18202F; --muted:#5C6579; --line:#DCE1E9;
+    --accent:#A8343F; --accent-ink:#FFFFFF; --accent-soft:#F6E4E6; --good:#2F7A4A; --good-soft:#E3F1E7; --warn:#9A6212; --warn-soft:#FBF0DC;
+    --shadow:0 1px 2px rgba(24,32,47,.06),0 8px 24px rgba(24,32,47,.06);
+  }
+  @media (prefers-color-scheme: dark){
+    :root:not([data-theme="light"]){
+      color-scheme:dark;
+      --bg:#10141C; --surface:#181E2A; --sunken:#131823; --ink:#E6E9F0; --muted:#98A1B3; --line:#2A3244;
+      --accent:#E37C87; --accent-ink:#1A0E10; --accent-soft:#3A2127; --good:#7CC393; --good-soft:#1C3325; --warn:#E3B45F; --warn-soft:#3A2E16;
+      --shadow:0 1px 2px rgba(0,0,0,.3),0 8px 24px rgba(0,0,0,.25);
+    }
+  }
+  :root[data-theme="dark"]{
+    color-scheme:dark;
+    --bg:#10141C; --surface:#181E2A; --sunken:#131823; --ink:#E6E9F0; --muted:#98A1B3; --line:#2A3244;
+    --accent:#E37C87; --accent-ink:#1A0E10; --accent-soft:#3A2127; --good:#7CC393; --good-soft:#1C3325; --warn:#E3B45F; --warn-soft:#3A2E16;
+    --shadow:0 1px 2px rgba(0,0,0,.3),0 8px 24px rgba(0,0,0,.25);
+  }
+  body{background:var(--bg);color:var(--ink);font-family:"IBM Plex Sans Thai",system-ui,-apple-system,"Segoe UI",sans-serif;font-size:14px;line-height:1.55}
+  [hidden]{display:none!important}
+  .num{font-family:"IBM Plex Mono",ui-monospace,SFMono-Regular,Menlo,monospace;font-variant-numeric:tabular-nums}
+  h1,h2,h3{text-wrap:balance}
+  .eyebrow{letter-spacing:.08em;text-transform:uppercase;font-size:11px;font-weight:600;color:var(--muted)}
+  :focus-visible{outline:2px solid var(--accent);outline-offset:2px;border-radius:6px}
+  .scroll-x{overflow-x:auto}
+  table{border-collapse:collapse;width:100%}
+  .drop.is-over{border-color:var(--accent);background:var(--accent-soft)}
+  .col-desc{background:color-mix(in srgb,var(--accent) 14%,transparent)}
+  .col-qty{background:color-mix(in srgb,var(--good) 16%,transparent)}
+  details>summary{list-style:none;cursor:pointer}
+  details>summary::-webkit-details-marker{display:none}
+  details[open] .chev{transform:rotate(90deg)}
+  .chev{transition:transform .15s}
+  @media (prefers-reduced-motion: reduce){*{transition:none!important;animation:none!important}}
+  dialog::backdrop{background:rgba(10,14,22,.55)}
+  dialog{max-width:min(1100px,calc(100vw - 24px));width:100%;max-height:calc(100vh - 32px);padding:0;border:1px solid var(--line);border-radius:14px;background:var(--surface);color:var(--ink)}
+</style>
+<style>*,:after,:before{--tw-border-spacing-x:0;--tw-border-spacing-y:0;--tw-translate-x:0;--tw-translate-y:0;--tw-rotate:0;--tw-skew-x:0;--tw-skew-y:0;--tw-scale-x:1;--tw-scale-y:1;--tw-pan-x: ;--tw-pan-y: ;--tw-pinch-zoom: ;--tw-scroll-snap-strictness:proximity;--tw-gradient-from-position: ;--tw-gradient-via-position: ;--tw-gradient-to-position: ;--tw-ordinal: ;--tw-slashed-zero: ;--tw-numeric-figure: ;--tw-numeric-spacing: ;--tw-numeric-fraction: ;--tw-ring-inset: ;--tw-ring-offset-width:0px;--tw-ring-offset-color:#fff;--tw-ring-color:rgba(59,130,246,.5);--tw-ring-offset-shadow:0 0 #0000;--tw-ring-shadow:0 0 #0000;--tw-shadow:0 0 #0000;--tw-shadow-colored:0 0 #0000;--tw-blur: ;--tw-brightness: ;--tw-contrast: ;--tw-grayscale: ;--tw-hue-rotate: ;--tw-invert: ;--tw-saturate: ;--tw-sepia: ;--tw-drop-shadow: ;--tw-backdrop-blur: ;--tw-backdrop-brightness: ;--tw-backdrop-contrast: ;--tw-backdrop-grayscale: ;--tw-backdrop-hue-rotate: ;--tw-backdrop-invert: ;--tw-backdrop-opacity: ;--tw-backdrop-saturate: ;--tw-backdrop-sepia: ;--tw-contain-size: ;--tw-contain-layout: ;--tw-contain-paint: ;--tw-contain-style: }::backdrop{--tw-border-spacing-x:0;--tw-border-spacing-y:0;--tw-translate-x:0;--tw-translate-y:0;--tw-rotate:0;--tw-skew-x:0;--tw-skew-y:0;--tw-scale-x:1;--tw-scale-y:1;--tw-pan-x: ;--tw-pan-y: ;--tw-pinch-zoom: ;--tw-scroll-snap-strictness:proximity;--tw-gradient-from-position: ;--tw-gradient-via-position: ;--tw-gradient-to-position: ;--tw-ordinal: ;--tw-slashed-zero: ;--tw-numeric-figure: ;--tw-numeric-spacing: ;--tw-numeric-fraction: ;--tw-ring-inset: ;--tw-ring-offset-width:0px;--tw-ring-offset-color:#fff;--tw-ring-color:rgba(59,130,246,.5);--tw-ring-offset-shadow:0 0 #0000;--tw-ring-shadow:0 0 #0000;--tw-shadow:0 0 #0000;--tw-shadow-colored:0 0 #0000;--tw-blur: ;--tw-brightness: ;--tw-contrast: ;--tw-grayscale: ;--tw-hue-rotate: ;--tw-invert: ;--tw-saturate: ;--tw-sepia: ;--tw-drop-shadow: ;--tw-backdrop-blur: ;--tw-backdrop-brightness: ;--tw-backdrop-contrast: ;--tw-backdrop-grayscale: ;--tw-backdrop-hue-rotate: ;--tw-backdrop-invert: ;--tw-backdrop-opacity: ;--tw-backdrop-saturate: ;--tw-backdrop-sepia: ;--tw-contain-size: ;--tw-contain-layout: ;--tw-contain-paint: ;--tw-contain-style: }/*! tailwindcss v3.4.16 | MIT License | https://tailwindcss.com*/*,:after,:before{box-sizing:border-box;border:0 solid #e5e7eb}:after,:before{--tw-content:""}:host,html{line-height:1.5;-webkit-text-size-adjust:100%;-moz-tab-size:4;-o-tab-size:4;tab-size:4;font-family:ui-sans-serif,system-ui,sans-serif,Apple Color Emoji,Segoe UI Emoji,Segoe UI Symbol,Noto Color Emoji;font-feature-settings:normal;font-variation-settings:normal;-webkit-tap-highlight-color:transparent}body{margin:0;line-height:inherit}hr{height:0;color:inherit;border-top-width:1px}abbr:where([title]){-webkit-text-decoration:underline dotted;text-decoration:underline dotted}h1,h2,h3,h4,h5,h6{font-size:inherit;font-weight:inherit}a{color:inherit;text-decoration:inherit}b,strong{font-weight:bolder}code,kbd,pre,samp{font-family:ui-monospace,SFMono-Regular,Menlo,Monaco,Consolas,Liberation Mono,Courier New,monospace;font-feature-settings:normal;font-variation-settings:normal;font-size:1em}small{font-size:80%}sub,sup{font-size:75%;line-height:0;position:relative;vertical-align:baseline}sub{bottom:-.25em}sup{top:-.5em}table{text-indent:0;border-color:inherit;border-collapse:collapse}button,input,optgroup,select,textarea{font-family:inherit;font-feature-settings:inherit;font-variation-settings:inherit;font-size:100%;font-weight:inherit;line-height:inherit;letter-spacing:inherit;color:inherit;margin:0;padding:0}button,select{text-transform:none}button,input:where([type=button]),input:where([type=reset]),input:where([type=submit]){-webkit-appearance:button;background-color:transparent;background-image:none}:-moz-focusring{outline:auto}:-moz-ui-invalid{box-shadow:none}progress{vertical-align:baseline}::-webkit-inner-spin-button,::-webkit-outer-spin-button{height:auto}[type=search]{-webkit-appearance:textfield;outline-offset:-2px}::-webkit-search-decoration{-webkit-appearance:none}::-webkit-file-upload-button{-webkit-appearance:button;font:inherit}summary{display:list-item}blockquote,dd,dl,figure,h1,h2,h3,h4,h5,h6,hr,p,pre{margin:0}fieldset{margin:0}fieldset,legend{padding:0}menu,ol,ul{list-style:none;margin:0;padding:0}dialog{padding:0}textarea{resize:vertical}input::-moz-placeholder,textarea::-moz-placeholder{opacity:1;color:#9ca3af}input::placeholder,textarea::placeholder{opacity:1;color:#9ca3af}[role=button],button{cursor:pointer}:disabled{cursor:default}audio,canvas,embed,iframe,img,object,svg,video{display:block;vertical-align:middle}img,video{max-width:100%;height:auto}[hidden]:where(:not([hidden=until-found])){display:none}.sr-only{position:absolute;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;clip:rect(0,0,0,0);white-space:nowrap;border-width:0}.fixed{position:fixed}.sticky{position:sticky}.bottom-6{bottom:1.5rem}.left-1\/2{left:50%}.top-0{top:0}.row-span-2{grid-row:span 2/span 2}.mx-auto{margin-left:auto;margin-right:auto}.-mb-px{margin-bottom:-1px}.mb-0\.5{margin-bottom:.125rem}.mb-2{margin-bottom:.5rem}.mb-3{margin-bottom:.75rem}.mr-1{margin-right:.25rem}.mt-1{margin-top:.25rem}.mt-2{margin-top:.5rem}.mt-4{margin-top:1rem}.mt-5{margin-top:1.25rem}.mt-6{margin-top:1.5rem}.inline-block{display:inline-block}.flex{display:flex}.inline-flex{display:inline-flex}.table{display:table}.grid{display:grid}.hidden{display:none}.h-10{height:2.5rem}.h-14{height:3.5rem}.h-6{height:1.5rem}.max-h-64{max-height:16rem}.max-h-72{max-height:18rem}.max-h-\[calc\(100vh-34px\)\]{max-height:calc(100vh - 34px)}.min-h-screen{min-height:100vh}.w-10{width:2.5rem}.w-14{width:3.5rem}.w-6{width:1.5rem}.w-full{width:100%}.min-w-0{min-width:0}.max-w-6xl{max-width:72rem}.max-w-\[220px\]{max-width:220px}.max-w-md{max-width:28rem}.max-w-sm{max-width:24rem}.shrink-0{flex-shrink:0}.-translate-x-1\/2{--tw-translate-x:-50%;transform:translate(var(--tw-translate-x),var(--tw-translate-y)) rotate(var(--tw-rotate)) skewX(var(--tw-skew-x)) skewY(var(--tw-skew-y)) scaleX(var(--tw-scale-x)) scaleY(var(--tw-scale-y))}.cursor-pointer{cursor:pointer}.grid-cols-2{grid-template-columns:repeat(2,minmax(0,1fr))}.grid-cols-\[1fr_150px_170px\]{grid-template-columns:1fr 150px 170px}.grid-cols-\[1fr_auto\]{grid-template-columns:1fr auto}.flex-col{flex-direction:column}.flex-wrap{flex-wrap:wrap}.items-start{align-items:flex-start}.items-end{align-items:flex-end}.items-center{align-items:center}.items-baseline{align-items:baseline}.justify-end{justify-content:flex-end}.justify-center{justify-content:center}.justify-between{justify-content:space-between}.gap-1{gap:.25rem}.gap-1\.5{gap:.375rem}.gap-2{gap:.5rem}.gap-3{gap:.75rem}.gap-4{gap:1rem}.gap-5{gap:1.25rem}.gap-x-3{-moz-column-gap:.75rem;column-gap:.75rem}.gap-y-0\.5{row-gap:.125rem}.divide-y>:not([hidden])~:not([hidden]){--tw-divide-y-reverse:0;border-top-width:calc(1px*(1 - var(--tw-divide-y-reverse)));border-bottom-width:calc(1px*var(--tw-divide-y-reverse))}.divide-\[var\(--line\)\]>:not([hidden])~:not([hidden]){border-color:var(--line)}.overflow-hidden{overflow:hidden}.overflow-y-auto{overflow-y:auto}.truncate{overflow:hidden;text-overflow:ellipsis}.truncate,.whitespace-nowrap{white-space:nowrap}.break-words{overflow-wrap:break-word}.break-all{word-break:break-all}.rounded-2xl{border-radius:1rem}.rounded-full{border-radius:9999px}.rounded-lg{border-radius:.5rem}.rounded-md{border-radius:.375rem}.rounded-xl{border-radius:.75rem}.border{border-width:1px}.border-2{border-width:2px}.border-b{border-bottom-width:1px}.border-b-2{border-bottom-width:2px}.border-l{border-left-width:1px}.border-t{border-top-width:1px}.border-dashed{border-style:dashed}.border-accent{border-color:var(--accent)}.border-good{border-color:var(--good)}.border-line{border-color:var(--line)}.border-transparent{border-color:transparent}.bg-accent{background-color:var(--accent)}.bg-accent-soft{background-color:var(--accent-soft)}.bg-bg{background-color:var(--bg)}.bg-good{background-color:var(--good)}.bg-good-soft{background-color:var(--good-soft)}.bg-ink{background-color:var(--ink)}.bg-sunken{background-color:var(--sunken)}.bg-surface{background-color:var(--surface)}.bg-warn-soft{background-color:var(--warn-soft)}.p-4{padding:1rem}.p-6{padding:1.5rem}.px-2{padding-left:.5rem;padding-right:.5rem}.px-3{padding-left:.75rem;padding-right:.75rem}.px-4{padding-left:1rem;padding-right:1rem}.px-5{padding-left:1.25rem;padding-right:1.25rem}.px-6{padding-left:1.5rem;padding-right:1.5rem}.py-0\.5{padding-top:.125rem;padding-bottom:.125rem}.py-1{padding-top:.25rem;padding-bottom:.25rem}.py-1\.5{padding-top:.375rem;padding-bottom:.375rem}.py-10{padding-top:2.5rem;padding-bottom:2.5rem}.py-2{padding-top:.5rem;padding-bottom:.5rem}.py-2\.5{padding-top:.625rem;padding-bottom:.625rem}.py-3{padding-top:.75rem;padding-bottom:.75rem}.py-4{padding-top:1rem;padding-bottom:1rem}.py-6{padding-top:1.5rem;padding-bottom:1.5rem}.py-8{padding-top:2rem;padding-bottom:2rem}.pb-16{padding-bottom:4rem}.pb-3{padding-bottom:.75rem}.pb-5{padding-bottom:1.25rem}.pl-3{padding-left:.75rem}.pr-3{padding-right:.75rem}.pt-4{padding-top:1rem}.pt-6{padding-top:1.5rem}.text-left{text-align:left}.text-center{text-align:center}.text-right{text-align:right}.text-2xl{font-size:1.5rem;line-height:2rem}.text-\[10px\]{font-size:10px}.text-\[11px\]{font-size:11px}.text-\[17px\]{font-size:17px}.text-base{font-size:1rem;line-height:1.5rem}.text-lg{font-size:1.125rem;line-height:1.75rem}.text-sm{font-size:.875rem;line-height:1.25rem}.text-xl{font-size:1.25rem;line-height:1.75rem}.text-xs{font-size:.75rem;line-height:1rem}.font-medium{font-weight:500}.font-semibold{font-weight:600}.leading-tight{line-height:1.25}.text-accent{color:var(--accent)}.text-accent-ink{color:var(--accent-ink)}.text-bg{color:var(--bg)}.text-good{color:var(--good)}.text-ink{color:var(--ink)}.text-muted{color:var(--muted)}.text-warn{color:var(--warn)}.text-white{--tw-text-opacity:1;color:rgb(255 255 255/var(--tw-text-opacity,1))}.accent-\[var\(--accent\)\]{accent-color:var(--accent)}.opacity-40{opacity:.4}.opacity-50{opacity:.5}.shadow-lg{--tw-shadow:0 10px 15px -3px rgba(0,0,0,.1),0 4px 6px -4px rgba(0,0,0,.1);--tw-shadow-colored:0 10px 15px -3px var(--tw-shadow-color),0 4px 6px -4px var(--tw-shadow-color)}.shadow-lg,.shadow-sm{box-shadow:var(--tw-ring-offset-shadow,0 0 #0000),var(--tw-ring-shadow,0 0 #0000),var(--tw-shadow)}.shadow-sm{--tw-shadow:0 1px 2px 0 rgba(0,0,0,.05);--tw-shadow-colored:0 1px 2px 0 var(--tw-shadow-color)}.filter{filter:var(--tw-blur) var(--tw-brightness) var(--tw-contrast) var(--tw-grayscale) var(--tw-hue-rotate) var(--tw-invert) var(--tw-saturate) var(--tw-sepia) var(--tw-drop-shadow)}.transition-colors{transition-property:color,background-color,border-color,text-decoration-color,fill,stroke;transition-timing-function:cubic-bezier(.4,0,.2,1);transition-duration:.15s}.first\:border-t-0:first-child{border-top-width:0}.hover\:bg-accent-soft:hover{background-color:var(--accent-soft)}.hover\:bg-sunken:hover{background-color:var(--sunken)}.hover\:underline:hover{text-decoration-line:underline}.hover\:opacity-90:hover{opacity:.9}.disabled\:cursor-not-allowed:disabled{cursor:not-allowed}.disabled\:opacity-40:disabled{opacity:.4}@media (min-width:640px){.sm\:row-span-1{grid-row:span 1/span 1}.sm\:grid{display:grid}.sm\:w-72{width:18rem}.sm\:grid-cols-2{grid-template-columns:repeat(2,minmax(0,1fr))}.sm\:grid-cols-3{grid-template-columns:repeat(3,minmax(0,1fr))}.sm\:grid-cols-4{grid-template-columns:repeat(4,minmax(0,1fr))}.sm\:grid-cols-\[1fr_150px_170px\]{grid-template-columns:1fr 150px 170px}.sm\:p-7{padding:1.75rem}.sm\:px-6{padding-left:1.5rem;padding-right:1.5rem}.sm\:py-12{padding-top:3rem;padding-bottom:3rem}.sm\:text-\[28px\]{font-size:28px}.sm\:text-xl{font-size:1.25rem;line-height:1.75rem}.sm\:text-ink{color:var(--ink)}}@media (min-width:1024px){.lg\:grid-cols-3{grid-template-columns:repeat(3,minmax(0,1fr))}.lg\:grid-cols-4{grid-template-columns:repeat(4,minmax(0,1fr))}}</style>
+<script src="https://cdn.jsdelivr.net/npm/xlsx-js-style@1.2.0/dist/xlsx.bundle.js"></script>
+
+</head>
+<body>
+<div id="gate" class="min-h-screen flex items-center justify-center px-4 py-10">
+  <form id="gateForm" class="w-full max-w-sm rounded-2xl border border-line bg-surface p-6 sm:p-7 flex flex-col gap-4" style="box-shadow:var(--shadow)">
+    <div>
+      <div class="eyebrow">Maison Roru · ICONSIAM · S102</div>
+      <h1 class="text-xl font-semibold mt-1">คำนวณการใช้วัตถุดิบ</h1>
+      <p class="text-muted text-sm mt-1">ใส่รหัสผ่านเพื่อเข้าใช้งาน</p>
+    </div>
+    <label class="flex flex-col gap-1.5 text-sm">
+      <span class="font-medium">รหัสผ่าน</span>
+      <input id="gatePwd" type="password" autocomplete="current-password" class="px-3 py-2.5 rounded-lg border border-line bg-bg text-base" required>
+    </label>
+    <div id="gateErr" class="text-sm text-accent" hidden>รหัสผ่านไม่ถูกต้อง ลองใหม่อีกครั้ง</div>
+    <button class="px-4 py-2.5 rounded-lg bg-accent text-accent-ink font-semibold hover:opacity-90">เข้าสู่ระบบ</button>
+  </form>
+</div>
+
+<div id="app" class="mx-auto max-w-6xl px-4 sm:px-6 pb-16" hidden>
+  <header class="flex flex-wrap items-end justify-between gap-4 pt-6 pb-5 border-b border-line">
+    <div>
+      <div class="eyebrow">Maison Roru · ICONSIAM · S102</div>
+      <h1 class="text-2xl sm:text-[28px] font-semibold leading-tight mt-1">คำนวณการใช้วัตถุดิบ</h1>
+      <p class="text-muted mt-1">อัปโหลดยอดขายจาก POS แล้วระบบจะคูณน้ำหนักต่อเมนูตามสูตรใน Master ให้อัตโนมัติ</p>
+    </div>
+    <div class="flex flex-wrap gap-2">
+      <button id="btnCopy" class="px-3 py-2 rounded-lg border border-line bg-surface hover:bg-sunken text-sm font-medium disabled:opacity-40 disabled:cursor-not-allowed">คัดลอกตาราง</button>
+      <button id="btnExport" class="px-3 py-2 rounded-lg bg-ink text-bg hover:opacity-90 text-sm font-medium disabled:opacity-40 disabled:cursor-not-allowed">ส่งออก Excel</button>
+      <button id="btnLogout" class="px-3 py-2 rounded-lg text-muted hover:bg-sunken text-sm font-medium">ออกจากระบบ</button>
+    </div>
+  </header>
+
+  <input id="fileSales" type="file" accept=".xls,.xlsx,.xlsm,.csv" class="sr-only">
+
+  <!-- Upload: empty state -->
+  <section id="uploadEmpty" class="mt-5">
+    <label id="drop" for="fileSales" class="drop flex flex-col items-center text-center gap-3 rounded-2xl border-2 border-dashed border-accent bg-surface px-6 py-10 sm:py-12 cursor-pointer transition-colors hover:bg-accent-soft">
+      <span class="flex h-14 w-14 items-center justify-center rounded-full bg-accent-soft text-accent" aria-hidden="true">
+        <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 16V4"/><path d="m6 10 6-6 6 6"/><path d="M4 16v3a1 1 0 0 0 1 1h14a1 1 0 0 0 1-1v-3"/></svg>
+      </span>
+      <span class="text-lg sm:text-xl font-semibold">อัปโหลดไฟล์ยอดขายที่นี่</span>
+      <span class="text-muted max-w-md">ลากไฟล์ S102 จาก POS มาวางในกรอบนี้ หรือกดปุ่มด้านล่างเพื่อเลือกไฟล์</span>
+      <span class="mt-1 inline-flex items-center gap-2 px-5 py-2.5 rounded-lg bg-accent text-accent-ink font-semibold shadow-sm">เลือกไฟล์ยอดขาย</span>
+      <span class="text-xs text-muted">รองรับ .xls .xlsx .csv</span>
+    </label>
+    <ol class="grid gap-3 sm:grid-cols-3 mt-4 text-sm">
+      <li class="flex gap-3 items-start"><span class="num flex h-6 w-6 shrink-0 items-center justify-center rounded-full bg-accent text-accent-ink text-xs font-semibold">1</span><span><b class="font-semibold">อัปโหลดไฟล์</b><br><span class="text-muted">ไฟล์ยอดขายรายวันจาก POS</span></span></li>
+      <li class="flex gap-3 items-start"><span class="num flex h-6 w-6 shrink-0 items-center justify-center rounded-full bg-sunken border border-line text-xs font-semibold">2</span><span><b class="font-semibold">ตรวจคอลัมน์</b><br><span class="text-muted">ดูว่าดึง ItemDesc และ Qty ถูกหรือไม่ เปลี่ยนคอลัมน์ได้</span></span></li>
+      <li class="flex gap-3 items-start"><span class="num flex h-6 w-6 shrink-0 items-center justify-center rounded-full bg-sunken border border-line text-xs font-semibold">3</span><span><b class="font-semibold">ดูยอดเบิกวัตถุดิบ</b><br><span class="text-muted">คำนวณตามสูตร Master แล้วส่งออก Excel ได้</span></span></li>
+    </ol>
+  </section>
+
+  <!-- Upload: loaded state -->
+  <section id="uploadLoaded" class="mt-5 rounded-xl bg-surface border border-line px-5 py-4 flex flex-wrap items-center justify-between gap-4" hidden>
+    <div class="flex items-center gap-3 min-w-0">
+      <span class="flex h-10 w-10 shrink-0 items-center justify-center rounded-lg bg-good-soft text-good" aria-hidden="true">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 3H6a1 1 0 0 0-1 1v16a1 1 0 0 0 1 1h12a1 1 0 0 0 1-1V8z"/><path d="M14 3v5h5"/><path d="m9 14 2 2 4-4"/></svg>
+      </span>
+      <div class="min-w-0">
+        <div class="text-xs text-muted">ไฟล์ที่ใช้คำนวณ</div>
+        <div id="srcName" class="font-medium break-all"></div>
+      </div>
+    </div>
+    <div class="flex gap-5">
+      <div><div class="text-muted text-xs">รายการขาย</div><div id="stRows" class="num text-lg font-semibold"></div></div>
+      <div><div class="text-muted text-xs">ตรงกับสูตร</div><div id="stMatched" class="num text-lg font-semibold text-good"></div></div>
+      <div><div class="text-muted text-xs">ไม่มีในสูตร</div><div id="stUnmatched" class="num text-lg font-semibold text-warn"></div></div>
+    </div>
+    <div class="flex flex-wrap gap-2">
+      <label for="fileSales" class="px-3 py-2 rounded-lg bg-accent text-accent-ink hover:opacity-90 text-sm font-semibold cursor-pointer">อัปโหลดไฟล์ใหม่</label>
+      <button id="btnRepreview" class="px-3 py-2 rounded-lg border border-line hover:bg-sunken text-sm font-medium">ตรวจคอลัมน์อีกครั้ง</button>
+      <button id="btnClear" class="px-3 py-2 rounded-lg border border-line text-accent hover:bg-accent-soft text-sm font-medium">ล้างข้อมูล</button>
+    </div>
+  </section>
+
+  <!-- Tabs -->
+  <nav class="flex gap-1 mt-6 border-b border-line" role="tablist" id="tabs">
+    <button data-tab="sum" role="tab" class="tab px-3 py-2 -mb-px border-b-2 font-medium">สรุปวัตถุดิบ</button>
+    <button data-tab="sales" role="tab" class="tab px-3 py-2 -mb-px border-b-2 font-medium">รายการขาย</button>
+    <button data-tab="master" role="tab" class="tab px-3 py-2 -mb-px border-b-2 font-medium">สูตร (Master)</button>
+  </nav>
+
+  <!-- Summary -->
+  <section id="panel-sum" class="pt-4">
+    <div class="flex flex-wrap items-center justify-between gap-3 mb-3">
+      <p class="text-muted text-sm">คลิกแต่ละวัตถุดิบเพื่อดูว่ามาจากเมนูไหน (เทียบคอลัมน์ C–G ใน Excel)</p>
+      <label class="flex items-center gap-2 text-sm"><input id="hideZero" type="checkbox" class="accent-[var(--accent)]" checked> ซ่อนวัตถุดิบที่ไม่ได้ใช้</label>
+    </div>
+    <div class="rounded-xl border border-line bg-surface overflow-hidden" style="box-shadow:var(--shadow)">
+      <div class="hidden sm:grid grid-cols-[1fr_150px_170px] gap-3 px-4 py-2 bg-sunken text-xs font-semibold text-muted">
+        <div>วัตถุดิบ</div><div class="text-right">ใช้รวม (นน.รวม)</div><div class="text-right">ยอดเบิก</div>
+      </div>
+      <div id="sumList"></div>
+    </div>
+  </section>
+
+  <!-- Sales -->
+  <section id="panel-sales" class="pt-4" hidden>
+    <div class="flex flex-wrap items-center justify-between gap-3 mb-3">
+      <input id="salesSearch" type="search" placeholder="ค้นหาเมนู" class="px-3 py-2 rounded-lg border border-line bg-surface w-full sm:w-72">
+      <div class="flex gap-1 text-sm" id="salesFilter">
+        <button data-f="all" class="sf px-3 py-1.5 rounded-full border border-line">ทั้งหมด</button>
+        <button data-f="m" class="sf px-3 py-1.5 rounded-full border border-line">ตรงกับสูตร</button>
+        <button data-f="u" class="sf px-3 py-1.5 rounded-full border border-line">ไม่มีในสูตร</button>
+      </div>
+    </div>
+    <div class="rounded-xl border border-line bg-surface scroll-x">
+      <table class="text-sm">
+        <thead class="bg-sunken text-muted text-xs"><tr><th class="text-left px-4 py-2 font-semibold">ItemDesc</th><th class="text-right px-4 py-2 font-semibold">Qty รวม</th><th class="text-left px-4 py-2 font-semibold">ใช้ในวัตถุดิบ</th></tr></thead>
+        <tbody id="salesBody"></tbody>
+      </table>
+    </div>
+    <p class="text-muted text-xs mt-2">รายการ "ไม่มีในสูตร" ส่วนใหญ่คือเครื่องดื่มหรือค่าบริการ ถ้าเป็นอาหารที่ควรตัดวัตถุดิบ ให้เพิ่มชื่อเมนูนั้นในคอลัมน์ C ของไฟล์ Master ให้สะกดตรงกัน</p>
+  </section>
+
+  <!-- Master -->
+  <section id="panel-master" class="pt-4" hidden>
+    <div class="flex flex-wrap items-center justify-between gap-3 mb-3">
+      <div>
+        <div id="masterName" class="font-medium"></div>
+        <div class="text-muted text-sm">อ่านจากคอลัมน์ B–I ของชีต Template: B วัตถุดิบ, C เมนู, D นน.ที่ใช้, E หน่วย, H สูตรรวม/ตัวหาร, I หน่วยเบิก</div>
+      </div>
+      <div class="flex gap-2">
+        <label for="fileMaster" class="px-3 py-2 rounded-lg border border-line bg-surface hover:bg-sunken text-sm font-medium cursor-pointer">อัปโหลด Master ใหม่</label>
+        <input id="fileMaster" type="file" accept=".xlsx,.xlsm,.xls" class="sr-only">
+        <button id="btnResetMaster" class="px-3 py-2 rounded-lg border border-line bg-surface hover:bg-sunken text-sm font-medium">ใช้ค่าเริ่มต้น</button>
+      </div>
+    </div>
+    <div id="masterList" class="grid gap-3 sm:grid-cols-2 lg:grid-cols-3"></div>
+  </section>
+</div>
+
+<!-- Preview dialog -->
+<dialog id="dlg" aria-labelledby="dlgTitle">
+  <div class="flex flex-col max-h-[calc(100vh-34px)]">
+    <div class="px-5 pt-4 pb-3 border-b border-line flex items-start justify-between gap-3">
+      <div>
+        <div class="eyebrow">ตรวจสอบข้อมูลก่อนคำนวณ</div>
+        <h2 id="dlgTitle" class="text-lg font-semibold break-all"></h2>
+      </div>
+      <button id="dlgClose" class="px-2 py-1 rounded-md hover:bg-sunken text-muted" aria-label="ปิด">✕</button>
+    </div>
+    <div class="px-5 py-4 overflow-y-auto flex flex-col gap-4">
+      <div class="grid gap-3 grid-cols-2 lg:grid-cols-4">
+        <label class="flex flex-col gap-1 text-sm"><span class="text-muted text-xs">ชีต</span><select id="selSheet" class="px-2 py-2 rounded-lg border border-line bg-surface"></select></label>
+        <label class="flex flex-col gap-1 text-sm"><span class="text-muted text-xs">แถวหัวตาราง</span><input id="selHeader" type="number" min="1" class="px-2 py-2 rounded-lg border border-line bg-surface num"></label>
+        <label class="flex flex-col gap-1 text-sm"><span class="text-xs font-semibold text-accent">คอลัมน์ ItemDesc</span><select id="selDesc" class="px-2 py-2 rounded-lg border-2 border-accent bg-surface"></select></label>
+        <label class="flex flex-col gap-1 text-sm"><span class="text-xs font-semibold text-good">คอลัมน์ Qty</span><select id="selQty" class="px-2 py-2 rounded-lg border-2 border-good bg-surface"></select></label>
+      </div>
+      <div id="dlgAuto" class="text-sm"></div>
+      <div id="dlgWarn" class="flex flex-col gap-2"></div>
+
+      <div>
+        <div class="flex flex-wrap items-center gap-2 mb-2 text-sm">
+          <span class="text-muted">คลิกหัวคอลัมน์ในตารางเพื่อกำหนดเป็น</span>
+          <div class="inline-flex rounded-lg border border-line overflow-hidden" id="pickMode">
+            <button data-pick="desc" class="pm px-3 py-1">ItemDesc</button>
+            <button data-pick="qty" class="pm px-3 py-1 border-l border-line">Qty</button>
+          </div>
+        </div>
+        <div class="scroll-x rounded-lg border border-line max-h-72 overflow-y-auto">
+          <table class="text-xs" id="rawTable"></table>
+        </div>
+        <div class="text-muted text-xs mt-1" id="rawNote"></div>
+      </div>
+
+      <div>
+        <div class="eyebrow mb-2">ผลที่ดึงได้</div>
+        <div class="grid grid-cols-2 sm:grid-cols-4 gap-3 mb-3" id="dlgStats"></div>
+        <div class="scroll-x rounded-lg border border-line max-h-64 overflow-y-auto">
+          <table class="text-sm"><thead class="bg-sunken text-muted text-xs sticky top-0"><tr><th class="text-left px-3 py-1.5">#</th><th class="text-left px-3 py-1.5">ItemDesc</th><th class="text-right px-3 py-1.5">Qty</th><th class="text-left px-3 py-1.5">สถานะ</th></tr></thead><tbody id="dlgParsed"></tbody></table>
+        </div>
+      </div>
+    </div>
+    <div class="px-5 py-3 border-t border-line flex flex-wrap justify-end gap-2">
+      <button id="dlgCancel" class="px-4 py-2 rounded-lg border border-line hover:bg-sunken font-medium">ยกเลิก</button>
+      <button id="dlgOk" class="px-4 py-2 rounded-lg bg-accent text-accent-ink font-semibold hover:opacity-90">ใช้ข้อมูลนี้คำนวณ</button>
+    </div>
+  </div>
+</dialog>
+
+<div id="toast" class="fixed left-1/2 -translate-x-1/2 bottom-6 px-4 py-2 rounded-lg bg-ink text-bg text-sm shadow-lg" hidden></div>
+
+<script>
+const DEFAULT_MASTER=[{"name":"Akami","div":1,"unit":"กรัม","base":"กรัม","items":[{"menu":"A6.Akamizuke","w":20,"u":"กรัม"},{"menu":"A7.Toro & Takuan","w":10,"u":"กรัม"},{"menu":"1/4 Akamizuke","w":20,"u":"กรัม"},{"menu":"3/4 Toro & Takuan","w":10,"u":"กรัม"},{"menu":"2/5 Toro & Takuan","w":10,"u":"กรัม"},{"menu":"B3.Maguro Trio Roll","w":20,"u":"กรัม"},{"menu":"MA SA KI DON","w":20,"u":"กรัม"},{"menu":"Lunch Set HARU NO IRODORI","w":30,"u":"กรัม"},{"menu":"Lunch Set JO HARU NO IRODORI","w":40,"u":"กรัม"},{"menu":"Iconic Hoseki Don","w":20,"u":"กรัม"},{"menu":"Maguro All-Star Don","w":40,"u":"กรัม"}]},{"name":"Choptoro","div":170.0,"unit":"ถาด","base":"กรัม","items":[{"menu":"A7.Toro & Takuan","w":20,"u":"กรัม"},{"menu":"6.Manao roll","w":15,"u":"กรัม"},{"menu":"3/4 Toro & Takuan","w":20,"u":"กรัม"},{"menu":"2/5 Toro & Takuan","w":20,"u":"กรัม"},{"menu":"6/7 Manao Roll","w":15,"u":"กรัม"},{"menu":"B1.Manao Roll","w":15,"u":"กรัม"},{"menu":"MA SA KI DON","w":20,"u":"กรัม"},{"menu":"Iconic Hoseki Don","w":20,"u":"กรัม"},{"menu":"7.Manao roll","w":15,"u":"กรัม"},{"menu":"Maguro All-Star Don","w":25,"u":"กรัม"}]},{"name":"Salmon","div":1,"unit":"กรัม","base":"กรัม","items":[{"menu":"A2.Salmon & Ikura","w":30,"u":"กรัม"},{"menu":"2/4 Salmon & Ikura","w":30,"u":"กรัม"},{"menu":"3/4 Salmon & Ikura","w":30,"u":"กรัม"},{"menu":"4/4 Salmon & Ikura","w":30,"u":"กรัม"},{"menu":"5/5 Salmon & Ikura","w":30,"u":"กรัม"},{"menu":"4/7 Salmon & Ikura","w":30,"u":"กรัม"},{"menu":"1/4 Aburi salmon avocado Ikura with Ankimo sauce","w":30,"u":"กรัม"},{"menu":"Lunch Set HARU NO IRODORI","w":55,"u":"กรัม"},{"menu":"Lunch Set JO HARU NO IRODORI","w":10,"u":"กรัม"},{"menu":"MA SA KI DON","w":30,"u":"กรัม"},{"menu":"Iconic Hoseki Don","w":20,"u":"กรัม"},{"menu":"7.Salmon Nori butter&Corn","w":25,"u":"กรัม"},{"menu":"9.Salmon & Ikura","w":30,"u":"กรัม"},{"menu":"10.Salmon & Ikura","w":30,"u":"กรัม"},{"menu":"Salmon Nori butter&Corn","w":25,"u":"กรัม"},{"menu":"Salmon Sashimi","w":75,"u":"กรัม"},{"menu":"Mixed Sashimi","w":45,"u":"กรัม"}]},{"name":"Hamachi","div":1,"unit":"กรัม","base":"กรัม","items":[{"menu":"A3.Hamachi & Yuzu Kosho","w":30,"u":"กรัม"},{"menu":"Hamachi Carpaccio","w":42,"u":"กรัม"},{"menu":"1/4 Hamachi & Yuzu Kosho","w":30,"u":"กรัม"},{"menu":"4/4 Hamachi & Yuzu Kosho","w":30,"u":"กรัม"},{"menu":"4/5 Hamachi & Yuzu Kosho","w":30,"u":"กรัม"},{"menu":"5/7 Hamachi & Yuzu Kosho","w":30,"u":"กรัม"},{"menu":"3/4 Hamachi & Yuzu Kosho","w":30,"u":"กรัม"},{"menu":"5/5 Hamachi & Yuzu Kosho","w":30,"u":"กรัม"},{"menu":"4/7 Hamachi & Yuzu Kosho","w":30,"u":"กรัม"},{"menu":"Lunch Set HARU NO IRODORI","w":15,"u":"กรัม"},{"menu":"Lunch Set JO HARU NO IRODORI","w":64,"u":"กรัม"},{"menu":"Iconic Hoseki Don","w":20,"u":"กรัม"},{"menu":"3.Hamachi Furikake","w":15,"u":"กรัม"},{"menu":"9.Hamachi & Yuzu Kosho","w":30,"u":"กรัม"},{"menu":"10.Hamachi & Yuzu Kosho","w":30,"u":"กรัม"},{"menu":"Hamachi Furikake","w":20,"u":"กรัม"},{"menu":"Hamachi Sashimi","w":75,"u":"กรัม"},{"menu":"Mixed Sashimi","w":45,"u":"กรัม"}]},{"name":"Madai","div":1,"unit":"กรัม","base":"กรัม","items":[{"menu":"A4.Madai & Ume Shiso","w":26,"u":"กรัม"},{"menu":"3/4 Madai & Ume Shiso","w":26,"u":"กรัม"},{"menu":"4/4 Madai & Ume Shiso","w":26,"u":"กรัม"},{"menu":"3/5 Madai & Ume Shiso","w":26,"u":"กรัม"},{"menu":"3/7 Madai & Ume Shiso","w":26,"u":"กรัม"},{"menu":"Madai Carpaccio","w":42,"u":"กรัม"},{"menu":"Madai Sashimi","w":49,"u":"กรัม"},{"menu":"Mixed Sashimi","w":35,"u":"กรัม"},{"menu":"Fish of the day with Ankimo sauce","w":26,"u":"กรัม"},{"menu":"Iconic Hoseki Don","w":20,"u":"กรัม"},{"menu":"5/5 Madai & Ume Shiso","w":26,"u":"กรัม"},{"menu":"4/7 Madai & Ume Shiso","w":26,"u":"กรัม"},{"menu":"Lunch Set HARU NO IRODORI","w":30,"u":"กรัม"},{"menu":"1.Madai with Ankimo sauce","w":26,"u":"กรัม"},{"menu":"10.Madai & Ume Shiso","w":26,"u":"กรัม"},{"menu":"9.Madai & Ume Shiso","w":26,"u":"กรัม"},{"menu":"Madai with Ankimo sauce","w":26,"u":"กรัม"}]},{"name":"Hotate","div":1,"unit":"ตัว","base":"ตัว","items":[{"menu":"A8.Hotate, Tobiko & Yuzu","w":0.75,"u":"ตัว"},{"menu":"A11.Amaebi, Hotate, Tobiko & Yuzu","w":0.5,"u":"ตัว"},{"menu":"Hotate Carpaccio","w":1.5,"u":"ตัว"},{"menu":"1/5 Amaebi, Hotate, Tobiko & Yuzu","w":0.5,"u":"ตัว"},{"menu":"1/7 Amaebi, Hotate, Tobiko & Yuzu","w":0.5,"u":"ตัว"},{"menu":"Hotate with Ankimo Sauce","w":0.75,"u":"ตัว"},{"menu":"2/4 Hotate, Tobiko & Yuzu","w":0.75,"u":"ตัว"},{"menu":"Supreme Kazan Don (Botan Ebi)","w":1,"u":"ตัว"},{"menu":"5.Hotate ama ebi Nigiri","w":0.5,"u":"ตัว"},{"menu":"Hotate ama ebi Nigiri","w":0.5,"u":"ตัว"},{"menu":"Iconic Hoseki Don","w":0.5,"u":"ตัว"}]},{"name":"Amaebi","div":170.0,"unit":"กล่อง","base":"กรัม","items":[{"menu":"A11.Amaebi, Hotate, Tobiko & Yuzu","w":7,"u":"กรัม"},{"menu":"1/5 Amaebi, Hotate, Tobiko & Yuzu","w":7,"u":"กรัม"},{"menu":"1/7 Amaebi, Hotate, Tobiko & Yuzu","w":7,"u":"กรัม"},{"menu":"5.Hotate ama ebi Nigiri","w":4,"u":"กรัม"},{"menu":"Hotate ama ebi Nigiri","w":4,"u":"กรัม"},{"menu":"Iconic Hoseki Don","w":15,"u":"กรัม"}]},{"name":"Unagi","div":50.0,"unit":"กล่อง","base":"ชิ้น","items":[{"menu":"A5.Unagi","w":1,"u":"ชิ้น"},{"menu":"7.Unagi roll","w":1,"u":"ชิ้น"},{"menu":"3/4 Unagi Roll","w":1,"u":"ชิ้น"},{"menu":"4/4 Unagi Roll","w":1,"u":"ชิ้น"},{"menu":"5/5 Unagi roll","w":1,"u":"ชิ้น"},{"menu":"4/7 Unagi roll","w":1,"u":"ชิ้น"},{"menu":"10.Unagi roll","w":1,"u":"ชิ้น"},{"menu":"9.Unagi roll","w":1,"u":"ชิ้น"},{"menu":"MA SA KI DON","w":1,"u":"ชิ้น"}]},{"name":"Zuwai","div":500.0,"unit":"ถุง","base":"กรัม","items":[{"menu":"A10.Zuwaigani & Ikura","w":20,"u":"กรัม"},{"menu":"2/7 Zuwaigani & Ikura","w":20,"u":"กรัม"},{"menu":"Iconic Hoseki Don","w":15,"u":"กรัม"}]},{"name":"Uni","div":250.0,"unit":"กล่อง","base":"กรัม","items":[{"menu":"A12.Uni","w":25,"u":"กรัม"},{"menu":"Canape Uni Caviar","w":15,"u":"กรัม"},{"menu":"6.Chu toro Uni caviar","w":15,"u":"กรัม"},{"menu":"6.Manao roll","w":20,"u":"กรัม"},{"menu":"6/7 Manao Roll","w":20,"u":"กรัม"},{"menu":"Chu toro Uni caviar","w":15,"u":"กรัม"},{"menu":"B1.Manao Roll","w":20,"u":"กรัม"},{"menu":"B2.Ankimo, Uni & Caviar Canape'","w":15,"u":"กรัม"},{"menu":"6.Mini Uni roll","w":15,"u":"กรัม"},{"menu":"7.Manao roll","w":20,"u":"กรัม"},{"menu":"Mini Uni roll","w":15,"u":"กรัม"},{"menu":"MA SA KI DON","w":15,"u":"กรัม"},{"menu":"Iconic Hoseki Don","w":15,"u":"กรัม"}]},{"name":"Otoro","div":1,"unit":"กรัม","base":"กรัม","items":[{"menu":"B3.Maguro Trio Roll","w":20,"u":"กรัม"},{"menu":"Maguro All-Star Don","w":50,"u":"กรัม"}]},{"name":"ChuToro","div":1,"unit":"กรัม","base":"กรัม","items":[{"menu":"A9.ChuToro","w":30,"u":"กรัม"},{"menu":"6.Chu toro Uni caviar","w":30,"u":"กรัม"},{"menu":"6/7 Chu Toro Roll","w":30,"u":"กรัม"},{"menu":"Chu toro Uni caviar","w":30,"u":"กรัม"},{"menu":"B3.Maguro Trio Roll","w":20,"u":"กรัม"},{"menu":"MA SA KI DON","w":20,"u":"กรัม"},{"menu":"3/4 Aburi Chutoro with Bulgogi sauce","w":30,"u":"กรัม"},{"menu":"4.Chu toro Nigiri","w":15,"u":"กรัม"},{"menu":"Chu toro Nigiri","w":15,"u":"กรัม"},{"menu":"Iconic Hoseki Don","w":20,"u":"กรัม"},{"menu":"Maguro All-Star Don","w":50,"u":"กรัม"}]},{"name":"Awabi","div":1,"unit":"ตัว","base":"ตัว","items":[{"menu":"Awabi with Kimo Awabi sauce","w":1,"u":"ตัว"},{"menu":"5.Awabi with Kimo Awabi sauce","w":1,"u":"ตัว"}]},{"name":"Sanma","div":1,"unit":"กรัม","base":"กรัม","items":[{"menu":"Sanma roll","w":25,"u":"กรัม"}]},{"name":"Hirame","div":1,"unit":"กรัม","base":"กรัม","items":[{"menu":"Hirame with pickled watermelon","w":16,"u":"กรัม"},{"menu":"2.Hirame with pickled watermelon","w":16,"u":"กรัม"}]},{"name":"Botan ebi","div":1,"unit":"ตัว","base":"ตัว","items":[{"menu":"Botan ebi with Shio & Yuzu","w":1,"u":"ตัว"},{"menu":"3.Botan ebi with Shio & Yuzu","w":1,"u":"ตัว"}]},{"name":"Baby Scallops","div":1,"unit":"กรัม","base":"กรัม","items":[{"menu":"Baby Scallops with Uni Sauce","w":20,"u":"กรัม"}]},{"name":"Tobiko","div":500.0,"unit":"กล่อง","base":"กรัม","items":[{"menu":"A11.Amaebi, Hotate, Tobiko & Yuzu","w":3,"u":"กรัม"},{"menu":"1/5 Amaebi, Hotate, Tobiko & Yuzu","w":3,"u":"กรัม"},{"menu":"1/7 Amaebi, Hotate, Tobiko & Yuzu","w":3,"u":"กรัม"},{"menu":"A8.Hotate, Tobiko & Yuzu","w":3,"u":"กรัม"},{"menu":"2/4 Hotate, Tobiko & Yuzu","w":3,"u":"กรัม"},{"menu":"Lunch Set HARU NO IRODORI","w":3,"u":"กรัม"},{"menu":"Lunch Set JO HARU NO IRODORI","w":3,"u":"กรัม"}]},{"name":"Caviar","div":50.0,"unit":"กระปุก","base":"กรัม","items":[{"menu":"Canape Uni Caviar","w":1,"u":"กรัม"},{"menu":"6.Chu toro Uni caviar","w":1,"u":"กรัม"},{"menu":"Chu toro Uni caviar","w":1,"u":"กรัม"},{"menu":"B2.Ankimo, Uni & Caviar Canape'","w":1,"u":"กรัม"},{"menu":"8.Nodoguro with Cream cheese & Caviar","w":1,"u":"กรัม"},{"menu":"9.Nodoguro with Cream cheese & Caviar","w":1,"u":"กรัม"},{"menu":"Nodoguro with Cream cheese & Caviar","w":1,"u":"กรัม"},{"menu":"Iconic Hoseki Don","w":1,"u":"กรัม"}]},{"name":"Ankimo","div":2000.0,"unit":"กล่อง","base":"กรัม","items":[{"menu":"Canape Uni Caviar","w":15,"u":"กรัม"},{"menu":"6.Manao roll","w":20,"u":"กรัม"},{"menu":"6/7 Manao Roll","w":20,"u":"กรัม"},{"menu":"B1.Manao Roll","w":20,"u":"กรัม"},{"menu":"B2.Ankimo, Uni & Caviar Canape'","w":15,"u":"กรัม"},{"menu":"7.Manao roll","w":20,"u":"กรัม"},{"menu":"MA SA KI DON","w":20,"u":"กรัม"}]},{"name":"Amadai","div":1,"unit":"กรัม","base":"กรัม","items":[{"menu":"Amadai Deep Fried","w":30,"u":"กรัม"},{"menu":"SET.Amadai Deep Fried","w":30,"u":"กรัม"},{"menu":"COMP. Deep fried eggplants","w":30,"u":"กรัม"}]},{"name":"Ikura","div":500.0,"unit":"กล่อง","base":"กรัม","items":[{"menu":"A10.Zuwaigani & Ikura","w":8,"u":"กรัม"},{"menu":"2/7 Zuwaigani & Ikura","w":8,"u":"กรัม"},{"menu":"A2.Salmon & Ikura","w":8,"u":"กรัม"},{"menu":"2/4 Salmon & Ikura","w":8,"u":"กรัม"},{"menu":"A1.Kampyo & Ikura & Tamagoyaki","w":8,"u":"กรัม"},{"menu":"6.Manao roll","w":15,"u":"กรัม"},{"menu":"6/7 Manao Roll","w":15,"u":"กรัม"},{"menu":"1/4 Aburi salmon avocado Ikura with Ankimo sauce","w":8,"u":"กรัม"},{"menu":"B1.Manao Roll","w":15,"u":"กรัม"},{"menu":"MA SA KI DON","w":10,"u":"กรัม"},{"menu":"Iconic Hoseki Don","w":15,"u":"กรัม"},{"menu":"7.Manao roll","w":20,"u":"กรัม"}]},{"name":"nodokuro","div":1,"unit":"กรัม","base":"กรัม","items":[{"menu":"8.Nodoguro with Cream cheese & Caviar","w":15,"u":"กรัม"},{"menu":"9.Nodoguro with Cream cheese & Caviar","w":15,"u":"กรัม"},{"menu":"Nodoguro with Cream cheese & Caviar","w":15,"u":"กรัม"}]},{"name":"ika","div":1,"unit":"กรัม","base":"กรัม","items":[{"menu":"2.Ika Ume ponzu","w":15,"u":"กรัม"},{"menu":"Ika Ume ponzu","w":15,"u":"กรัม"}]},{"name":"shrimp","div":1,"unit":"ตัว","base":"ตัว","items":[{"menu":"Chawanmushi with Shrimp & Edamame","w":0.5,"u":"ตัว"}]},{"name":"Kinmedai","div":1,"unit":"กรัม","base":"กรัม","items":[{"menu":"Iconic Hoseki Don","w":20,"u":"กรัม"}]}];
+
+</script>
+<script>
+(() => {
+const $ = s => document.querySelector(s);
+const esc = s => String(s ?? '').replace(/[&<>"]/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+const norm = s => String(s ?? '').trim().replace(/\s+/g,' ').toLowerCase();
+const fmt = (n, d=2) => (Math.round(n*1000)/1000).toLocaleString('th-TH',{maximumFractionDigits:d});
+const colName = i => XLSX.utils.encode_col(i);
+
+let master = DEFAULT_MASTER, masterName = 'MaisonrRoru-ICS-18Sep69.xlsx (ค่าเริ่มต้น)';
+try { const s = JSON.parse(localStorage.getItem('ics-master')||'null'); if (s && s.groups?.length) { master = s.groups; masterName = s.name; } } catch(e){}
+
+let sales = [];
+let source = null;
+let result = null, tab = 'sum', salesF = 'all';
+let lastPreview = null;
+
+function toast(msg){ const t=$('#toast'); t.textContent=msg; t.hidden=false; clearTimeout(toast._t); toast._t=setTimeout(()=>t.hidden=true,2600); }
+
+function menuIndex(){ const m=new Map(); master.forEach(g=>g.items.forEach(it=>{ const k=norm(it.menu); if(!m.has(k)) m.set(k,new Set()); m.get(k).add(g.name); })); return m; }
+
+function compute(){
+  const agg = new Map();
+  sales.forEach(r => { const k=norm(r.desc); if(!k) return; const a=agg.get(k)||{desc:r.desc.trim(),qty:0,lines:0}; a.qty+=r.qty; a.lines++; agg.set(k,a); });
+  const groups = master.map(g => {
+    const items = g.items.map(it => { const q=agg.get(norm(it.menu))?.qty||0; return {...it, qty:q, total:q*it.w}; });
+    const total = items.reduce((s,i)=>s+i.total,0);
+    return {...g, items, total, result: total/(g.div||1)};
+  });
+  const idx = menuIndex();
+  const salesAgg = [...agg.entries()].map(([k,a]) => ({...a, ings: idx.has(k)?[...idx.get(k)]:[]})).sort((a,b)=>b.qty-a.qty);
+  result = {groups, salesAgg};
+}
+
+function renderSource(){
+  const has=!!source;
+  $('#uploadEmpty').hidden=has; $('#uploadLoaded').hidden=!has;
+  $('#btnCopy').disabled=!has; $('#btnExport').disabled=!has;
+  if(!has) return;
+  $('#srcName').textContent = source.name;
+  const m = result.salesAgg.filter(s=>s.ings.length), u = result.salesAgg.filter(s=>!s.ings.length);
+  $('#stRows').textContent = fmt(sales.length,0);
+  $('#stMatched').textContent = fmt(m.length,0)+' เมนู';
+  $('#stUnmatched').textContent = fmt(u.length,0)+' เมนู';
+  $('#btnRepreview').hidden = !P.wb;
+}
+
+function renderSum(){
+  if(!source){ $('#sumList').innerHTML='<div class="px-4 py-10 text-center text-muted">ยังไม่มีข้อมูล อัปโหลดไฟล์ยอดขายด้านบนเพื่อเริ่มคำนวณ</div>'; return; }
+  const hide = $('#hideZero').checked;
+  const gs = result.groups.filter(g => !hide || g.total>0);
+  if(!gs.length){ $('#sumList').innerHTML='<div class="px-4 py-8 text-center text-muted">ยังไม่มีวัตถุดิบที่ถูกใช้จากยอดขายนี้</div>'; return; }
+  $('#sumList').innerHTML = gs.map(g => {
+    const used = g.items.filter(i=>i.qty>0);
+    const div = g.div && g.div!==1;
+    return `<details class="border-t border-line first:border-t-0">
+      <summary class="grid grid-cols-[1fr_auto] sm:grid-cols-[1fr_150px_170px] gap-x-3 gap-y-0.5 items-center px-4 py-3 hover:bg-sunken ${g.total?'':'opacity-50'}">
+        <div class="flex items-center gap-2 min-w-0 row-span-2 sm:row-span-1">
+          <span class="chev text-muted text-xs">▶</span>
+          <span class="font-semibold truncate">${esc(g.name)}</span>
+          <span class="text-muted text-xs whitespace-nowrap">${used.length}/${g.items.length} เมนู</span>
+        </div>
+        <div class="text-right num text-muted sm:text-ink">${fmt(g.total)} <span class="text-xs text-muted">${esc(g.base||'')}</span></div>
+        <div class="text-right">
+          <span class="num text-[17px] font-semibold ${g.total?'text-accent':''}">${fmt(g.result,3)}</span>
+          <span class="text-sm">${esc(g.unit||'')}</span>
+          ${div?`<div class="text-[11px] text-muted num">÷ ${fmt(g.div,0)} ${esc(g.base||'')}/${esc(g.unit||'')}</div>`:''}
+        </div>
+      </summary>
+      <div class="px-4 pb-3 scroll-x">
+        <table class="text-sm">
+          <thead class="text-muted text-xs"><tr><th class="text-left py-1.5 pr-3 font-medium">เมนู (C)</th><th class="text-right py-1.5 px-3 font-medium">นน.ที่ใช้ (D)</th><th class="text-right py-1.5 px-3 font-medium">ขาย (F)</th><th class="text-right py-1.5 pl-3 font-medium">นน.รวม (G)</th></tr></thead>
+          <tbody>${g.items.map(i=>`<tr class="border-t border-line ${i.qty?'':'text-muted'}"><td class="py-1.5 pr-3">${esc(i.menu)}</td><td class="text-right px-3 num">${fmt(i.w,3)} ${esc(i.u||'')}</td><td class="text-right px-3 num ${i.qty?'font-semibold':''}">${fmt(i.qty,0)}</td><td class="text-right pl-3 num ${i.qty?'font-semibold':''}">${fmt(i.total)}</td></tr>`).join('')}</tbody>
+        </table>
+      </div>
+    </details>`;
+  }).join('');
+}
+
+function renderSales(){
+  if(!source){ $('#salesBody').innerHTML='<tr><td colspan="3" class="px-4 py-8 text-center text-muted">ยังไม่มีข้อมูล อัปโหลดไฟล์ยอดขายก่อน</td></tr>'; return; }
+  const q = norm($('#salesSearch').value);
+  const rows = result.salesAgg.filter(s => (salesF==='all' || (salesF==='m')===(s.ings.length>0)) && (!q || norm(s.desc).includes(q)));
+  $('#salesBody').innerHTML = rows.map(s=>`<tr class="border-t border-line"><td class="px-4 py-2">${esc(s.desc)}</td><td class="px-4 py-2 text-right num font-medium">${fmt(s.qty)}</td><td class="px-4 py-2">${s.ings.length? s.ings.map(n=>`<span class="inline-block mr-1 mb-0.5 px-2 py-0.5 rounded-full bg-good-soft text-good text-xs">${esc(n)}</span>`).join('') : '<span class="text-warn text-xs">ไม่มีในสูตร</span>'}</td></tr>`).join('') || '<tr><td colspan="3" class="px-4 py-6 text-center text-muted">ไม่พบรายการ</td></tr>';
+  document.querySelectorAll('.sf').forEach(b=>{ const on=b.dataset.f===salesF; b.classList.toggle('bg-ink',on); b.classList.toggle('text-bg',on); b.classList.toggle('bg-surface',!on); });
+}
+
+function renderMaster(){
+  $('#masterName').textContent = masterName;
+  $('#masterList').innerHTML = master.map(g=>`<div class="rounded-xl border border-line bg-surface p-4">
+    <div class="flex items-baseline justify-between gap-2"><span class="font-semibold">${esc(g.name)}</span><span class="text-xs text-muted num">${g.div&&g.div!==1?`÷${fmt(g.div,0)} → ${esc(g.unit)}`:esc(g.unit||'')}</span></div>
+    <ul class="mt-2 text-sm divide-y divide-[var(--line)]">${g.items.map(i=>`<li class="flex justify-between gap-3 py-1"><span class="min-w-0 break-words">${esc(i.menu)}</span><span class="num text-muted whitespace-nowrap">${fmt(i.w,3)} ${esc(i.u||'')}</span></li>`).join('')}</ul>
+  </div>`).join('');
+}
+
+function renderTabs(){
+  document.querySelectorAll('.tab').forEach(b=>{ const on=b.dataset.tab===tab; b.setAttribute('aria-selected',on); b.classList.toggle('border-accent',on); b.classList.toggle('text-ink',on); b.classList.toggle('border-transparent',!on); b.classList.toggle('text-muted',!on); });
+  ['sum','sales','master'].forEach(t=>$('#panel-'+t).hidden = t!==tab);
+}
+
+function renderAll(){ compute(); renderSource(); renderSum(); renderSales(); renderMaster(); renderTabs(); }
+
+/* ---------- Upload & preview ---------- */
+const P = { wb:null, name:'', sheet:'', grid:[], header:0, desc:-1, qty:-1, pick:'desc' };
+
+function toNum(v){ if(typeof v==='number') return v; const s=String(v??'').replace(/,/g,'').trim(); if(s==='') return NaN; const n=Number(s); return n; }
+
+function autoDetect(grid){
+  const descRe=/^item\s*desc(ription)?$|^itemdesc$|^description$|^menu|รายการ|ชื่อสินค้า/i, qtyRe=/^qty$|^quantity$|^จำนวน/i;
+  let best=null;
+  for(let r=0;r<Math.min(grid.length,30);r++){
+    const row=grid[r]||[]; let d=-1,q=-1;
+    row.forEach((c,i)=>{ const s=String(c).trim(); if(d<0 && descRe.test(s)) d=i; });
+    row.forEach((c,i)=>{ const s=String(c).trim(); if(qtyRe.test(s) && (q<0 || (d>=0 && Math.abs(i-d)<Math.abs(q-d)))) q=i; });
+    if(d>=0 && q>=0){ best={header:r,desc:d,qty:q,found:true}; break; }
+    if(d>=0 && !best) best={header:r,desc:d,qty:-1,found:false};
+  }
+  if(!best) best={header:0,desc:-1,qty:-1,found:false};
+  const width=Math.max(0,...grid.slice(best.header,best.header+50).map(r=>r.length));
+  const body=grid.slice(best.header+1,best.header+80);
+  if(best.desc<0){ // longest text column
+    let sc=-1; for(let i=0;i<width;i++){ const s=body.reduce((a,r)=>a+(typeof r[i]==='string'&&isNaN(toNum(r[i]))?String(r[i]).length:0),0); if(s>sc){sc=s;best.desc=i;} }
+  }
+  if(best.qty<0){ // first mostly-integer column right of desc
+    for(let i=0;i<width;i++){ if(i===best.desc) continue; const vals=body.map(r=>toNum(r[i])).filter(v=>!isNaN(v)); if(vals.length>body.length*0.8 && vals.every(v=>Number.isInteger(v)&&v>=0&&v<1000)){ best.qty=i; if(i>best.desc) break; } }
+  }
+  return best;
+}
+
+function loadSheet(name, detect=true){
+  P.sheet=name;
+  P.grid = XLSX.utils.sheet_to_json(P.wb.Sheets[name],{header:1,defval:'',raw:true,blankrows:true});
+  if(detect){ const a=autoDetect(P.grid); Object.assign(P,{header:a.header,desc:a.desc,qty:a.qty,found:a.found}); }
+}
+
+function parsed(){
+  const out=[]; let skipped=0, badQty=0;
+  for(let r=P.header+1;r<P.grid.length;r++){
+    const row=P.grid[r]||[]; const d=String(row[P.desc]??'').trim(); const qv=row[P.qty]; const q=toNum(qv);
+    if(!d && (qv===''||qv==null)) continue;
+    if(!d){ skipped++; continue; }
+    if(isNaN(q)){ badQty++; skipped++; continue; }
+    out.push({desc:d,qty:q,row:r+1});
+  }
+  return {rows:out,skipped,badQty};
+}
+
+function renderPreview(){
+  $('#dlgTitle').textContent=P.name;
+  $('#selSheet').innerHTML=P.wb.SheetNames.map(n=>`<option ${n===P.sheet?'selected':''}>${esc(n)}</option>`).join('');
+  $('#selHeader').value=P.header+1;
+  const hdr=P.grid[P.header]||[];
+  const width=Math.max(hdr.length,...P.grid.slice(P.header,P.header+40).map(r=>r.length),1);
+  const opt=sel=>'<option value="-1">— เลือกคอลัมน์ —</option>'+Array.from({length:width},(_,i)=>`<option value="${i}" ${i===sel?'selected':''}>${colName(i)} : ${esc(String(hdr[i]??'').slice(0,40))||'(ว่าง)'}</option>`).join('');
+  $('#selDesc').innerHTML=opt(P.desc); $('#selQty').innerHTML=opt(P.qty);
+  $('#dlgAuto').innerHTML = P.found
+    ? `<span class="text-good font-medium">ตรวจพบอัตโนมัติ</span> <span class="text-muted">หัวตารางแถว ${P.header+1}, ItemDesc = คอลัมน์ ${colName(P.desc)}, Qty = คอลัมน์ ${colName(P.qty)}</span>`
+    : `<span class="text-warn font-medium">ไม่พบหัวคอลัมน์ ItemDesc/Qty ชัดเจน</span> <span class="text-muted">ระบบเดาคอลัมน์ให้แล้ว กรุณาตรวจสอบและเลือกใหม่ถ้าไม่ถูกต้อง</span>`;
+  // raw table
+  const cls=i=> i===P.desc?'col-desc':i===P.qty?'col-qty':'';
+  const rows=P.grid.slice(P.header+1,P.header+16);
+  $('#rawTable').innerHTML = `<thead class="sticky top-0 bg-sunken"><tr><th class="px-2 py-1 text-muted text-left font-medium">แถว</th>${Array.from({length:width},(_,i)=>`<th data-col="${i}" class="${cls(i)} px-2 py-1 text-left cursor-pointer hover:underline whitespace-nowrap font-semibold" title="คลิกเพื่อตั้งเป็น ${P.pick==='desc'?'ItemDesc':'Qty'}"><div class="text-muted text-[10px] num">${colName(i)}${i===P.desc?' · ItemDesc':i===P.qty?' · Qty':''}</div>${esc(String(hdr[i]??'').slice(0,30))}</th>`).join('')}</tr></thead>
+    <tbody>${rows.map((r,ri)=>`<tr class="border-t border-line"><td class="px-2 py-1 text-muted num">${P.header+2+ri}</td>${Array.from({length:width},(_,i)=>`<td class="${cls(i)} px-2 py-1 whitespace-nowrap max-w-[220px] truncate">${esc(r[i])}</td>`).join('')}</tr>`).join('')}</tbody>`;
+  $('#rawNote').textContent=`แสดง 15 แถวแรกจากทั้งหมด ${Math.max(0,P.grid.length-P.header-1)} แถว`;
+  document.querySelectorAll('.pm').forEach(b=>{ const on=b.dataset.pick===P.pick; b.classList.toggle('bg-accent',on&&P.pick==='desc'); b.classList.toggle('bg-good',on&&P.pick==='qty'); b.classList.toggle('text-accent-ink',on); b.classList.toggle('text-white',on&&P.pick==='qty'); });
+  // parsed
+  const warn=[]; let stats='', list='';
+  if(P.desc<0||P.qty<0){ warn.push(['warn','กรุณาเลือกคอลัมน์ ItemDesc และ Qty ให้ครบ']); }
+  else if(P.desc===P.qty){ warn.push(['warn','ItemDesc และ Qty เป็นคอลัมน์เดียวกัน กรุณาเลือกใหม่']); }
+  else{
+    const p=parsed(), idx=menuIndex();
+    const matched=p.rows.filter(r=>idx.has(norm(r.desc)));
+    const tq=p.rows.reduce((s,r)=>s+r.qty,0);
+    if(p.rows.length && p.badQty>p.rows.length*0.3) warn.push(['warn',`คอลัมน์ Qty มีค่าที่ไม่ใช่ตัวเลข ${p.badQty} แถว อาจเลือกคอลัมน์ผิด`]);
+    if(p.rows.length && !matched.length) warn.push(['warn','ไม่มีชื่อเมนูที่ตรงกับสูตรเลย คอลัมน์ ItemDesc อาจไม่ถูกต้อง']);
+    if(p.rows.length && p.rows.some(r=>!Number.isInteger(r.qty))) warn.push(['info','พบ Qty ที่เป็นทศนิยม ตรวจสอบว่าไม่ได้เลือกคอลัมน์ราคาแทนจำนวน']);
+    const st=(l,v,c='')=>`<div class="rounded-lg bg-sunken px-3 py-2"><div class="text-xs text-muted">${l}</div><div class="num text-lg font-semibold ${c}">${v}</div></div>`;
+    stats=st('แถวที่ดึงได้',fmt(p.rows.length,0))+st('Qty รวม',fmt(tq))+st('ตรงกับสูตร',fmt(matched.length,0)+' แถว','text-good')+st('ข้ามไป',fmt(p.skipped,0)+' แถว',p.skipped?'text-warn':'');
+    list=p.rows.slice(0,300).map((r,i)=>{ const m=idx.has(norm(r.desc)); return `<tr class="border-t border-line"><td class="px-3 py-1 text-muted num text-xs">${r.row}</td><td class="px-3 py-1">${esc(r.desc)}</td><td class="px-3 py-1 text-right num">${fmt(r.qty,3)}</td><td class="px-3 py-1">${m?'<span class="text-good text-xs font-medium">ตรงกับสูตร</span>':'<span class="text-muted text-xs">ไม่มีในสูตร</span>'}</td></tr>`; }).join('');
+    P._parsed=p;
+  }
+  $('#dlgStats').innerHTML=stats;
+  $('#dlgParsed').innerHTML=list||'<tr><td colspan="4" class="px-3 py-4 text-center text-muted">ไม่มีข้อมูล</td></tr>';
+  $('#dlgWarn').innerHTML=warn.map(([t,m])=>`<div class="rounded-lg px-3 py-2 text-sm ${t==='warn'?'bg-warn-soft text-warn':'bg-sunken text-muted'}">${esc(m)}</div>`).join('');
+  $('#dlgOk').disabled = !(P.desc>=0&&P.qty>=0&&P.desc!==P.qty&&P._parsed?.rows.length);
+  $('#dlgOk').classList.toggle('opacity-40',$('#dlgOk').disabled);
+}
+
+async function openSalesFile(file){
+  try{
+    const buf=await file.arrayBuffer();
+    P.wb=XLSX.read(buf,{type:'array',cellDates:false}); P.name=file.name; P.pick='desc'; P._parsed=null;
+    // choose sheet: first where detection finds headers
+    let chosen=P.wb.SheetNames[0];
+    for(const n of P.wb.SheetNames){ const g=XLSX.utils.sheet_to_json(P.wb.Sheets[n],{header:1,defval:'',blankrows:true}); if(autoDetect(g).found){ chosen=n; break; } }
+    loadSheet(chosen);
+    renderPreview(); lastPreview=true;
+    $('#dlg').showModal();
+  }catch(e){ toast('อ่านไฟล์ไม่ได้: '+(e.message||e)); }
+}
+
+$('#fileSales').addEventListener('change',e=>{ const f=e.target.files[0]; if(f) openSalesFile(f); e.target.value=''; });
+const drop=$('#drop');
+['dragenter','dragover'].forEach(ev=>document.addEventListener(ev,e=>{ if(!e.dataTransfer?.types?.includes('Files')) return; e.preventDefault(); drop.classList.add('is-over');}));
+['dragleave','drop'].forEach(ev=>document.addEventListener(ev,e=>{ e.preventDefault(); drop.classList.remove('is-over');}));
+document.addEventListener('drop',e=>{ if($('#app').hidden || $('#dlg').open) return; const f=e.dataTransfer?.files?.[0]; if(f) openSalesFile(f); });
+
+/* ---------- Clear ---------- */
+const clearBtn=$('#btnClear');
+clearBtn.addEventListener('click',()=>{
+  if(!clearBtn.dataset.armed){ clearBtn.dataset.armed='1'; clearBtn.textContent='กดอีกครั้งเพื่อยืนยันการล้าง'; clearBtn.classList.add('bg-accent-soft'); clearTimeout(clearBtn._t); clearBtn._t=setTimeout(resetClear,3500); return; }
+  resetClear();
+  sales=[]; source=null; P.wb=null; P._parsed=null; $('#salesSearch').value=''; tab='sum';
+  renderAll(); toast('ล้างข้อมูลแล้ว');
+});
+function resetClear(){ delete clearBtn.dataset.armed; clearBtn.textContent='ล้างข้อมูล'; clearBtn.classList.remove('bg-accent-soft'); }
+
+$('#selSheet').addEventListener('change',e=>{ loadSheet(e.target.value); renderPreview(); });
+$('#selHeader').addEventListener('change',e=>{ P.header=Math.max(0,(parseInt(e.target.value)||1)-1); renderPreview(); });
+$('#selDesc').addEventListener('change',e=>{ P.desc=+e.target.value; renderPreview(); });
+$('#selQty').addEventListener('change',e=>{ P.qty=+e.target.value; renderPreview(); });
+$('#pickMode').addEventListener('click',e=>{ const b=e.target.closest('[data-pick]'); if(b){ P.pick=b.dataset.pick; renderPreview(); } });
+$('#rawTable').addEventListener('click',e=>{ const th=e.target.closest('th[data-col]'); if(!th) return; const c=+th.dataset.col; if(P.pick==='desc'){ P.desc=c; P.pick='qty'; } else { P.qty=c; P.pick='desc'; } renderPreview(); });
+const closeDlg=()=>$('#dlg').close();
+$('#dlgClose').addEventListener('click',closeDlg); $('#dlgCancel').addEventListener('click',closeDlg);
+$('#dlgOk').addEventListener('click',()=>{
+  if(!P._parsed) return;
+  sales=P._parsed.rows.map(r=>({desc:r.desc,qty:r.qty}));
+  source={name:`${P.name} · ${P.sheet} · ${colName(P.desc)}/${colName(P.qty)}`};
+  closeDlg(); tab='sum'; renderAll(); toast(`คำนวณจาก ${sales.length} รายการแล้ว`);
+});
+$('#btnRepreview').addEventListener('click',()=>{ if(P.wb){ renderPreview(); $('#dlg').showModal(); } });
+
+/* ---------- Master upload ---------- */
+function parseMaster(wb){
+  const names=[...wb.SheetNames].sort((a,b)=>(b.toLowerCase()==='template')-(a.toLowerCase()==='template'));
+  for(const n of names){
+    const ws=wb.Sheets[n]; if(!ws['!ref']) continue;
+    const rg=XLSX.utils.decode_range(ws['!ref']); const cell=(r,c)=>ws[XLSX.utils.encode_cell({r,c})];
+    const val=(r,c)=>{ const x=cell(r,c); return x?x.v:undefined; };
+    const groups=[];
+    for(let r=rg.s.r;r<=rg.e.r;r++){
+      const b=val(r,1), h=cell(r,7);
+      if(!b || !h || !h.f) continue;
+      const m=h.f.replace(/\s|\+/g,'').match(/^SUM\(G(\d+)(?::G(\d+))?\)(?:\/([\d.]+))?/i); if(!m) continue;
+      const s=+m[1]-1, e=+(m[2]||m[1])-1, d=m[3]?+m[3]:1;
+      const items=[]; for(let rr=s;rr<=e;rr++){ const c=val(rr,2), w=val(rr,3); if(c!=null && c!=='' && typeof w==='number') items.push({menu:String(c),w,u:val(rr,4)||''}); }
+      if(items.length) groups.push({name:String(b),div:d,unit:val(r,8)||'',base:items[0].u,items});
+    }
+    if(groups.length) return {groups,sheet:n};
+  }
+  return null;
+}
+$('#fileMaster').addEventListener('change',async e=>{
+  const f=e.target.files[0]; e.target.value=''; if(!f) return;
+  try{
+    const wb=XLSX.read(await f.arrayBuffer(),{type:'array',cellFormula:true});
+    const res=parseMaster(wb);
+    if(!res){ toast('ไม่พบสูตรในคอลัมน์ B–I (ต้องมีชื่อวัตถุดิบในคอลัมน์ B และสูตร =SUM(G..) ในคอลัมน์ H)'); return; }
+    master=res.groups; masterName=`${f.name} · ชีต ${res.sheet}`;
+    try{ localStorage.setItem('ics-master',JSON.stringify({name:masterName,groups:master})); }catch(_){}
+    renderAll(); toast(`โหลด Master แล้ว ${master.length} วัตถุดิบ`);
+  }catch(err){ toast('อ่านไฟล์ Master ไม่ได้: '+(err.message||err)); }
+});
+$('#btnResetMaster').addEventListener('click',()=>{ master=DEFAULT_MASTER; masterName='MaisonrRoru-ICS-18Sep69.xlsx (ค่าเริ่มต้น)'; try{localStorage.removeItem('ics-master');}catch(_){} renderAll(); toast('กลับไปใช้ Master ค่าเริ่มต้นแล้ว'); });
+
+
+/* ---------- Excel workbook with Dashboard ---------- */
+function buildWorkbook(){
+  const U=XLSX.utils, wb=U.book_new();
+  const C={ink:'18202F',muted:'5C6579',faint:'9AA3B5',line:'DCE1E9',accent:'A8343F',accentSoft:'F6E4E6',band:'F4F6F9',white:'FFFFFF',good:'2F7A4A',goodSoft:'E3F1E7'};
+  const F='Tahoma';
+  const thin={style:'thin',color:{rgb:C.line}}, med={style:'medium',color:{rgb:C.muted}};
+  const box=(top=thin)=>({top,bottom:thin,left:thin,right:thin});
+  const st=(o={})=>({font:{name:F,sz:10,color:{rgb:C.ink},...(o.font||{})},alignment:{vertical:'center',...(o.al||{})},...(o.fill?{fill:{patternType:'solid',fgColor:{rgb:o.fill}}}:{}),...(o.border?{border:o.border}:{})});
+  const nf=v=>Number.isInteger(Math.round(v*1000)/1000)?'#,##0':'#,##0.00#';
+  const put=(ws,addr,v,s,extra={})=>{ ws[addr]={t:typeof v==='number'?'n':'s',v,s,...extra}; };
+
+  // --- ยอดขาย sheet (source for SUMIF)
+  const salesRows=result.salesAgg;
+  const wsS=U.aoa_to_sheet([['ItemDesc','Qty','ใช้ในวัตถุดิบ'],...salesRows.map(x=>[x.desc,x.qty,x.ings.join(', ')])]);
+  ['A1','B1','C1'].forEach(a=>wsS[a].s=st({font:{bold:true,color:{rgb:C.white}},fill:C.ink,border:box()}));
+  salesRows.forEach((x,i)=>{ const r=i+2; ['A','B','C'].forEach(c=>{ const cell=wsS[c+r]; if(cell) cell.s=st({font:x.ings.length?{}:{color:{rgb:C.faint}},border:box()}); }); });
+  wsS['!cols']=[{wch:46},{wch:8},{wch:40}];
+  const lastSales=salesRows.length+1;
+
+  // --- Dashboard
+  const ws={}; const merges=[]; let r=1;
+  const now=new Date();
+  const used=result.groups.filter(g=>g.total>0).length;
+  const matched=result.salesAgg.filter(x=>x.ings.length).length, unmatched=result.salesAgg.length-matched;
+  put(ws,'A1','Maison Roru ICONSIAM · S102 — สรุปการใช้วัตถุดิบ',st({font:{bold:true,sz:15,color:{rgb:C.white}},fill:C.ink,al:{horizontal:'left',indent:1}}));
+  for(const c of 'BCDEFGHI') put(ws,c+'1','',st({fill:C.ink}));
+  merges.push('A1:I1');
+  put(ws,'A2',`ไฟล์ยอดขาย: ${source.name}    ·    ส่งออกเมื่อ ${now.toLocaleString('th-TH',{dateStyle:'medium',timeStyle:'short'})}`,st({font:{color:{rgb:C.muted}},al:{indent:1}}));
+  merges.push('A2:I2');
+  // KPI row
+  const kpis=[['รายการขาย',sales.length,'แถว'],['ตรงกับสูตร',matched,'เมนู'],['ไม่มีในสูตร',unmatched,'เมนู'],['วัตถุดิบที่ใช้',used,`/ ${result.groups.length}`]];
+  const kcols=[['A','B'],['C','C'],['D','F'],['G','I']];
+  kpis.forEach(([l,v,u],i)=>{ const [a,b]=kcols[i];
+    put(ws,a+'3',l,st({font:{sz:9,color:{rgb:C.muted}},fill:C.band,al:{indent:1}}));
+    put(ws,a+'4',`${v.toLocaleString()} ${u}`,st({font:{bold:true,sz:13,color:{rgb:i===1?C.good:i===2?'9A6212':C.ink}},fill:C.band,al:{indent:1}}));
+    if(a!==b){ merges.push(`${a}3:${b}3`,`${a}4:${b}4`); }
+    for(const c of 'ABCDEFGHI'.slice('ABCDEFGHI'.indexOf(a)+1,'ABCDEFGHI'.indexOf(b)+1)){ put(ws,c+'3','',st({fill:C.band})); put(ws,c+'4','',st({fill:C.band})); }
+  });
+  // header
+  r=6;
+  const heads=['ลำดับ','วัตถุดิบ','ItemDesc','นน.ที่ใช้','หน่วย','S102 (ขาย)','นน.รวม','ยอดเบิก','หน่วยเบิก'];
+  heads.forEach((h,i)=>put(ws,U.encode_col(i)+r,h,st({font:{bold:true,color:{rgb:C.white}},fill:C.accent,border:box(),al:{horizontal:i<3?'left':'center'}})));
+  r++;
+  const summary=[];
+  result.groups.forEach((g,gi)=>{
+    const start=r, end=r+g.items.length-1, band=gi%2?C.band:C.white, top=med, zero=g.total<=0;
+    g.items.forEach((it,ii)=>{
+      const bt=ii===0?top:thin, dim=it.qty<=0;
+      const base=(extra={})=>st({fill:band,border:box(bt),...extra});
+      put(ws,'A'+r,ii===0?gi+1:'',base({al:{horizontal:'center',vertical:'top'},font:{color:{rgb:C.muted}}}));
+      put(ws,'B'+r,ii===0?g.name:'',base({al:{vertical:'top'},font:{bold:true,sz:11,color:{rgb:zero?C.faint:C.ink}}}));
+      put(ws,'C'+r,it.menu,base({font:{color:{rgb:dim?C.faint:C.ink}}}));
+      put(ws,'D'+r,it.w,base({al:{horizontal:'right'},font:{color:{rgb:dim?C.faint:C.ink}}}),{z:nf(it.w)});
+      put(ws,'E'+r,it.u||'',base({al:{horizontal:'center'},font:{color:{rgb:C.muted}}}));
+      ws['F'+r]={t:'n',v:it.qty,f:`SUMIF('ยอดขาย'!$A$2:$A$${lastSales},C${r},'ยอดขาย'!$B$2:$B$${lastSales})`,z:'#,##0',s:base({al:{horizontal:'right'},font:dim?{color:{rgb:C.faint}}:{bold:true}})};
+      ws['G'+r]={t:'n',v:it.total,f:`F${r}*D${r}`,z:nf(it.total),s:base({al:{horizontal:'right'},font:dim?{color:{rgb:C.faint}}:{bold:true}})};
+      put(ws,'H'+r,'',base()); put(ws,'I'+r,'',base());
+      r++;
+    });
+    const div=g.div&&g.div!==1;
+    ws['H'+start]={t:'n',v:g.result,f:div?`SUM(G${start}:G${end})/${g.div}`:`SUM(G${start}:G${end})`,z:div?'#,##0.000':nf(g.result),
+      s:st({fill:zero?band:C.accentSoft,border:box(top),al:{horizontal:'right',vertical:'center'},font:{bold:true,sz:13,color:{rgb:zero?C.faint:C.accent}}})};
+    put(ws,'I'+start,g.unit||'',st({fill:zero?band:C.accentSoft,border:box(top),al:{horizontal:'left',vertical:'center'},font:{bold:true,color:{rgb:zero?C.faint:C.accent}}}));
+    if(end>start){ merges.push(`A${start}:A${end}`,`B${start}:B${end}`,`H${start}:H${end}`,`I${start}:I${end}`); }
+    summary.push([g,start]);
+  });
+  const lastRow=r-1;
+  // side summary K:M
+  put(ws,'K6','วัตถุดิบ',st({font:{bold:true,color:{rgb:C.white}},fill:C.ink,border:box()}));
+  put(ws,'L6','ยอดเบิก',st({font:{bold:true,color:{rgb:C.white}},fill:C.ink,border:box(),al:{horizontal:'center'}}));
+  put(ws,'M6','หน่วย',st({font:{bold:true,color:{rgb:C.white}},fill:C.ink,border:box(),al:{horizontal:'center'}}));
+  put(ws,'K5','สรุปยอดเบิก',st({font:{bold:true,sz:11}}));
+  summary.forEach(([g,start],i)=>{ const rr=7+i, zero=g.total<=0, band=i%2?C.band:C.white;
+    put(ws,'K'+rr,g.name,st({fill:band,border:box(),font:{bold:!zero,color:{rgb:zero?C.faint:C.ink}}}));
+    ws['L'+rr]={t:'n',v:g.result,f:`H${start}`,z:g.div&&g.div!==1?'#,##0.000':nf(g.result),s:st({fill:band,border:box(),al:{horizontal:'right'},font:{bold:!zero,color:{rgb:zero?C.faint:C.accent}}})};
+    put(ws,'M'+rr,g.unit||'',st({fill:band,border:box(),font:{color:{rgb:zero?C.faint:C.muted}}}));
+  });
+  put(ws,'A'+(lastRow+2),'F = SUMIF จากชีต "ยอดขาย"  ·  G = F × D  ·  H = SUM(G) ÷ ขนาดบรรจุ (ถ้ามี)',st({font:{sz:9,italic:true,color:{rgb:C.muted}}}));
+  ws['!ref']=`A1:M${Math.max(lastRow+2,7+summary.length)}`;
+  ws['!merges']=merges.map(m=>U.decode_range(m));
+  ws['!cols']=[{wch:6},{wch:15},{wch:50},{wch:10},{wch:8},{wch:11},{wch:11},{wch:13},{wch:10},{wch:3},{wch:16},{wch:11},{wch:9}];
+  ws['!rows']=[{hpt:30},{hpt:18},{hpt:16},{hpt:22},{hpt:8},{hpt:22}];
+  U.book_append_sheet(wb,ws,'Dashboard');
+
+  // --- สรุป & รายละเอียด (plain tables, styled header)
+  const hdr=(sheet,n)=>{ for(let i=0;i<n;i++){ const a=U.encode_col(i)+'1'; if(sheet[a]) sheet[a].s=st({font:{bold:true,color:{rgb:C.white}},fill:C.ink,border:box()}); } };
+  const wsSum=U.aoa_to_sheet([['วัตถุดิบ','ใช้รวม','หน่วย','ตัวหาร','ยอดเบิก','หน่วยเบิก'],...summaryRows()]); hdr(wsSum,6); wsSum['!cols']=[{wch:16},{wch:11},{wch:8},{wch:8},{wch:11},{wch:10}];
+  U.book_append_sheet(wb,wsSum,'สรุป');
+  const det=[['วัตถุดิบ','ItemDesc','นน.ที่ใช้','หน่วย','จำนวนขาย','นน.รวม']]; result.groups.forEach(g=>g.items.forEach(i=>det.push([g.name,i.menu,i.w,i.u,i.qty,+i.total.toFixed(3)])));
+  const wsD=U.aoa_to_sheet(det); hdr(wsD,6); wsD['!cols']=[{wch:16},{wch:44},{wch:10},{wch:8},{wch:10},{wch:10}];
+  U.book_append_sheet(wb,wsD,'รายละเอียด');
+  hdr(wsS,3);
+  U.book_append_sheet(wb,wsS,'ยอดขาย');
+  return wb;
+}
+/* ---------- Export ---------- */
+function summaryRows(){ return result.groups.map(g=>[g.name, +g.total.toFixed(3), g.base||'', g.div||1, +g.result.toFixed(3), g.unit||'']); }
+$('#btnCopy').addEventListener('click',async()=>{
+  if(!source) return;
+  const tsv=[['วัตถุดิบ','ใช้รวม','หน่วย','ตัวหาร','ยอดเบิก','หน่วยเบิก'],...summaryRows()].map(r=>r.join('\t')).join('\n');
+  try{ await navigator.clipboard.writeText(tsv); toast('คัดลอกแล้ว วางใน Excel ได้เลย'); }
+  catch(_){ const ta=document.createElement('textarea'); ta.value=tsv; document.body.appendChild(ta); ta.select(); try{document.execCommand('copy'); toast('คัดลอกแล้ว');}catch(e){toast('คัดลอกไม่ได้');} ta.remove(); }
+});
+$('#btnExport').addEventListener('click',async()=>{
+  if(!source) return;
+  const wb=buildWorkbook();
+  const base=(source.name.split(' · ')[0]||'sales').replace(/\.[^.]+$/,'');
+  const filename=`ICS-${base}.xlsx`;
+  const dl = window.claude?.use ? await window.claude.use('downloads').catch(()=>null) : null;
+  if(dl){
+    try{ const out=XLSX.write(wb,{bookType:'xlsx',type:'array'}); await dl.save({filename,data:new Blob([out])}); toast('บันทึกไฟล์แล้ว'); }
+    catch(e){ if(e?.code!=='declined') toast('บันทึกไฟล์ไม่ได้ ใช้ปุ่ม "คัดลอกตาราง" แทน'); }
+  } else {
+    try{ XLSX.writeFile(wb,filename); }catch(e){ toast('ดาวน์โหลดไม่ได้ ใช้ปุ่ม "คัดลอกตาราง" แทน'); }
+  }
+});
+
+/* ---------- misc ---------- */
+$('#tabs').addEventListener('click',e=>{ const b=e.target.closest('[data-tab]'); if(b){ tab=b.dataset.tab; renderTabs(); } });
+$('#salesFilter').addEventListener('click',e=>{ const b=e.target.closest('[data-f]'); if(b){ salesF=b.dataset.f; renderSales(); } });
+$('#salesSearch').addEventListener('input',renderSales);
+$('#hideZero').addEventListener('change',renderSum);
+
+/* ---------- Password gate ---------- */
+const PWD_HASH='adfd6d2e9530e67fab887cb2ff37d693397a40f2546e6c4b9c39ca9d3faa998d';
+async function sha256(t){
+  if(window.crypto?.subtle){ const b=await crypto.subtle.digest('SHA-256',new TextEncoder().encode(t)); return [...new Uint8Array(b)].map(x=>x.toString(16).padStart(2,'0')).join(''); }
+  return null;
+}
+function unlock(){ $('#gate').hidden=true; $('#app').hidden=false; renderAll(); }
+function lock(){ try{sessionStorage.removeItem('ics-auth');}catch(_){} sales=[]; source=null; P.wb=null; $('#app').hidden=true; $('#gate').hidden=false; $('#gatePwd').value=''; $('#gatePwd').focus(); }
+$('#gateForm').addEventListener('submit',async e=>{
+  e.preventDefault();
+  const v=$('#gatePwd').value; const h=await sha256(v);
+  const ok = h ? h===PWD_HASH : v==='ics'+'1234';
+  if(ok){ $('#gateErr').hidden=true; try{sessionStorage.setItem('ics-auth',PWD_HASH);}catch(_){} unlock(); }
+  else { $('#gateErr').hidden=false; $('#gatePwd').select(); }
+});
+$('#btnLogout').addEventListener('click',lock);
+let authed=false; try{ authed=sessionStorage.getItem('ics-auth')===PWD_HASH; }catch(_){}
+if(authed) unlock(); else $('#gatePwd').focus();
+})();
+</script>
+
+</body>
+</html>
