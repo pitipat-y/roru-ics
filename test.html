@@ -78,6 +78,7 @@
       <p class="text-muted mt-1">อัปโหลดยอดขายจาก POS แล้วระบบจะคูณน้ำหนักต่อเมนูตามสูตรใน Master ให้อัตโนมัติ</p>
     </div>
     <div class="flex flex-wrap gap-2">
+      <button id="btnHistory" class="px-3 py-2 rounded-lg border border-line bg-surface hover:bg-sunken text-sm font-medium">ประวัติ</button>
       <button id="btnCopy" class="px-3 py-2 rounded-lg border border-line bg-surface hover:bg-sunken text-sm font-medium disabled:opacity-40 disabled:cursor-not-allowed">คัดลอกตาราง</button>
       <button id="btnExport" class="px-3 py-2 rounded-lg bg-ink text-bg hover:opacity-90 text-sm font-medium disabled:opacity-40 disabled:cursor-not-allowed">ส่งออก Excel</button>
       <button id="btnLogout" class="px-3 py-2 rounded-lg text-muted hover:bg-sunken text-sm font-medium hidden">ออกจากระบบ</button>
@@ -233,6 +234,43 @@
   </div>
 </dialog>
 
+<!-- History dialog -->
+<dialog id="dlgHistory" aria-labelledby="dlgHistoryTitle">
+  <div class="flex flex-col max-h-[calc(100vh-34px)]">
+    <div class="px-5 pt-4 pb-3 border-b border-line flex items-start justify-between gap-3">
+      <div>
+        <div class="eyebrow">ประวัติการใช้งาน</div>
+        <h2 id="dlgHistoryTitle" class="text-lg font-semibold">ไฟล์ที่เคยคำนวณ</h2>
+        <p class="text-muted text-xs mt-1">เก็บไว้ในเบราว์เซอร์นี้เท่านั้น สูงสุด 15 รายการล่าสุด</p>
+      </div>
+      <button id="dlgHistoryClose" class="px-2 py-1 rounded-md hover:bg-sunken text-muted" aria-label="ปิด">✕</button>
+    </div>
+    <div class="px-5 py-4 overflow-y-auto flex flex-col gap-2" id="historyList"></div>
+    <div class="px-5 py-3 border-t border-line flex flex-wrap justify-between gap-2">
+      <button id="btnHistoryClear" class="px-3 py-2 rounded-lg border border-line text-accent hover:bg-accent-soft text-sm font-medium">ล้างประวัติทั้งหมด</button>
+      <button id="dlgHistoryCancel" class="px-4 py-2 rounded-lg border border-line hover:bg-sunken font-medium">ปิด</button>
+    </div>
+  </div>
+</dialog>
+
+<!-- Android download notice -->
+<dialog id="dlgAndroidNotice" aria-labelledby="dlgAndroidTitle">
+  <div class="flex flex-col max-h-[calc(100vh-34px)]">
+    <div class="px-5 pt-4 pb-3 border-b border-line">
+      <div class="eyebrow">แจ้งเตือน</div>
+      <h2 id="dlgAndroidTitle" class="text-lg font-semibold">ดาวน์โหลดอาจไม่ทำงานในแอปนี้</h2>
+    </div>
+    <div class="px-5 py-4 text-sm text-muted flex flex-col gap-2">
+      <p>ถ้าเปิดหน้านี้จากในแอป (เช่น LINE) การดาวน์โหลดไฟล์อาจไม่ทำงาน</p>
+      <p>ถ้ากดดาวน์โหลดแล้วไม่มีอะไรเกิดขึ้น ให้กดปุ่ม <b class="text-ink">⋯</b> มุมขวาบน แล้วเลือก <b class="text-ink">"เปิดด้วยเบราว์เซอร์อื่น"</b> แล้วลองอีกครั้ง</p>
+    </div>
+    <div class="px-5 py-3 border-t border-line flex flex-wrap justify-end gap-2">
+      <button id="dlgAndroidCancel" class="px-4 py-2 rounded-lg border border-line hover:bg-sunken font-medium">ยกเลิก</button>
+      <button id="dlgAndroidContinue" class="px-4 py-2 rounded-lg bg-accent text-accent-ink font-semibold hover:opacity-90">ดาวน์โหลดต่อ</button>
+    </div>
+  </div>
+</dialog>
+
 <div id="toast" class="fixed left-1/2 -translate-x-1/2 bottom-6 px-4 py-2 rounded-lg bg-ink text-bg text-sm shadow-lg" hidden></div>
 
 <script>
@@ -246,6 +284,9 @@ const esc = s => String(s ?? '').replace(/[&<>"]/g, c => ({'&':'&amp;','<':'&lt;
 const norm = s => String(s ?? '').trim().replace(/\s+/g,' ').toLowerCase();
 const fmt = (n, d=2) => (Math.round(n*1000)/1000).toLocaleString('th-TH',{maximumFractionDigits:d});
 const colName = i => XLSX.utils.encode_col(i);
+const UA = navigator.userAgent || '';
+const isIOS = /iPad|iPhone|iPod/.test(UA) || (navigator.platform==='MacIntel' && navigator.maxTouchPoints>1);
+const isAndroid = /Android/.test(UA);
 
 let master = DEFAULT_MASTER, masterName = 'MaisonrRoru-ICS-18Sep69.xlsx (ค่าเริ่มต้น)';
 try { const s = JSON.parse(localStorage.getItem('ics-master')||'null'); if (s && s.groups?.length) { master = s.groups; masterName = s.name; } } catch(e){}
@@ -467,9 +508,64 @@ $('#dlgOk').addEventListener('click',()=>{
   if(!P._parsed) return;
   sales=P._parsed.rows.map(r=>({desc:r.desc,qty:r.qty}));
   source={name:`${P.name} · ${P.sheet} · ${colName(P.desc)}/${colName(P.qty)}`};
+  addHistoryEntry({
+    id: Date.now().toString(36)+Math.random().toString(36).slice(2,7),
+    ts: Date.now(),
+    fileName: P.name,
+    sheet: P.sheet,
+    rowCount: sales.length,
+    sales: sales.map(s=>({d:s.desc,q:s.qty}))
+  });
   closeDlg(); tab='sum'; renderAll(); toast(`คำนวณจาก ${sales.length} รายการแล้ว`);
 });
 $('#btnRepreview').addEventListener('click',()=>{ if(P.wb){ renderPreview(); $('#dlg').showModal(); } });
+
+/* ---------- History ---------- */
+const HISTORY_KEY='ics-history';
+const HISTORY_MAX=15;
+function loadHistory(){ try{ return JSON.parse(localStorage.getItem(HISTORY_KEY)||'[]'); }catch(_){ return []; } }
+function saveHistory(list){ try{ localStorage.setItem(HISTORY_KEY, JSON.stringify(list)); return true; }catch(_){ return false; } }
+function addHistoryEntry(entry){
+  let list=loadHistory();
+  list.unshift(entry);
+  while(list.length>HISTORY_MAX) list.pop();
+  while(list.length && !saveHistory(list)) list.pop(); // drop oldest if quota exceeded
+}
+function fmtWhen(ts){ return new Date(ts).toLocaleString('th-TH',{dateStyle:'medium',timeStyle:'short'}); }
+function renderHistoryList(){
+  const list=loadHistory(); const box=$('#historyList');
+  if(!list.length){ box.innerHTML='<div class="text-muted text-center py-8">ยังไม่มีประวัติ</div>'; return; }
+  box.innerHTML=list.map(h=>`<div class="rounded-xl border border-line bg-surface p-4 flex items-center justify-between gap-3">
+    <div class="min-w-0">
+      <div class="font-medium truncate">${esc(h.fileName)}${h.sheet?` · ${esc(h.sheet)}`:''}</div>
+      <div class="text-muted text-xs mt-1">${esc(fmtWhen(h.ts))} · <span class="num">${fmt(h.rowCount,0)}</span> แถว</div>
+    </div>
+    <div class="flex gap-2 shrink-0">
+      <button data-use="${h.id}" class="px-3 py-2 rounded-lg bg-accent text-accent-ink hover:opacity-90 text-sm font-semibold">ใช้ไฟล์นี้</button>
+      <button data-del="${h.id}" class="px-3 py-2 rounded-lg border border-line text-accent hover:bg-accent-soft text-sm font-medium">ลบ</button>
+    </div>
+  </div>`).join('');
+}
+function useHistoryEntry(id){
+  const h=loadHistory().find(x=>x.id===id); if(!h) return;
+  sales=h.sales.map(r=>({desc:r.d,qty:r.q}));
+  source={name:`${h.fileName}${h.sheet?` · ${h.sheet}`:''} (จากประวัติ ${fmtWhen(h.ts)})`};
+  $('#dlgHistory').close(); tab='sum'; renderAll(); toast(`โหลดจากประวัติ: ${h.fileName}`);
+}
+function deleteHistoryEntry(id){ saveHistory(loadHistory().filter(x=>x.id!==id)); renderHistoryList(); }
+$('#btnHistory').addEventListener('click',()=>{ renderHistoryList(); $('#dlgHistory').showModal(); });
+$('#dlgHistoryClose').addEventListener('click',()=>$('#dlgHistory').close());
+$('#dlgHistoryCancel').addEventListener('click',()=>$('#dlgHistory').close());
+$('#historyList').addEventListener('click',e=>{
+  const u=e.target.closest('[data-use]'); if(u){ useHistoryEntry(u.dataset.use); return; }
+  const d=e.target.closest('[data-del]'); if(d){ deleteHistoryEntry(d.dataset.del); }
+});
+const histClearBtn=$('#btnHistoryClear');
+histClearBtn.addEventListener('click',()=>{
+  if(!histClearBtn.dataset.armed){ histClearBtn.dataset.armed='1'; histClearBtn.textContent='กดอีกครั้งเพื่อยืนยัน'; histClearBtn.classList.add('bg-accent-soft'); clearTimeout(histClearBtn._t); histClearBtn._t=setTimeout(resetHistClear,3500); return; }
+  resetHistClear(); saveHistory([]); renderHistoryList(); toast('ล้างประวัติแล้ว');
+});
+function resetHistClear(){ delete histClearBtn.dataset.armed; histClearBtn.textContent='ล้างประวัติทั้งหมด'; histClearBtn.classList.remove('bg-accent-soft'); }
 
 /* ---------- Master upload ---------- */
 function parseMaster(wb){
@@ -608,6 +704,34 @@ $('#btnCopy').addEventListener('click',async()=>{
   try{ await navigator.clipboard.writeText(tsv); toast('คัดลอกแล้ว วางใน Excel ได้เลย'); }
   catch(_){ const ta=document.createElement('textarea'); ta.value=tsv; document.body.appendChild(ta); ta.select(); try{document.execCommand('copy'); toast('คัดลอกแล้ว');}catch(e){toast('คัดลอกไม่ได้');} ta.remove(); }
 });
+function xlsxBlob(wb){
+  const out=XLSX.write(wb,{bookType:'xlsx',type:'array'});
+  return new Blob([out],{type:'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'});
+}
+async function tryShareFile(blob, filename){
+  try{
+    const file=new File([blob], filename, {type:blob.type});
+    if(navigator.canShare && navigator.canShare({files:[file]})){
+      await navigator.share({files:[file], title:filename});
+      return true;
+    }
+  }catch(e){ if(e?.name==='AbortError') return true; }
+  return false;
+}
+function directDownload(blob, filename){
+  try{
+    const url=URL.createObjectURL(blob);
+    const a=document.createElement('a'); a.href=url; a.download=filename; document.body.appendChild(a); a.click(); a.remove();
+    setTimeout(()=>URL.revokeObjectURL(url),4000);
+    return true;
+  }catch(e){ return false; }
+}
+let pendingExport=null;
+$('#dlgAndroidCancel').addEventListener('click',()=>{ pendingExport=null; $('#dlgAndroidNotice').close(); });
+$('#dlgAndroidContinue').addEventListener('click',()=>{
+  $('#dlgAndroidNotice').close();
+  if(pendingExport){ if(!directDownload(pendingExport.blob,pendingExport.filename)) toast('ดาวน์โหลดไม่ได้ ลองกดปุ่ม ⋯ แล้วเลือก "เปิดด้วยเบราว์เซอร์อื่น"'); pendingExport=null; }
+});
 $('#btnExport').addEventListener('click',async()=>{
   if(!source) return;
   const wb=buildWorkbook();
@@ -617,9 +741,21 @@ $('#btnExport').addEventListener('click',async()=>{
   if(dl){
     try{ const out=XLSX.write(wb,{bookType:'xlsx',type:'array'}); await dl.save({filename,data:new Blob([out])}); toast('บันทึกไฟล์แล้ว'); }
     catch(e){ if(e?.code!=='declined') toast('บันทึกไฟล์ไม่ได้ ใช้ปุ่ม "คัดลอกตาราง" แทน'); }
-  } else {
-    try{ XLSX.writeFile(wb,filename); }catch(e){ toast('ดาวน์โหลดไม่ได้ ใช้ปุ่ม "คัดลอกตาราง" แทน'); }
+    return;
   }
+  const blob=xlsxBlob(wb);
+  if(isIOS){
+    const shared=await tryShareFile(blob,filename);
+    if(shared){ toast('เลือก "บันทึกไปยังไฟล์" จากเมนูแชร์เพื่อเก็บไฟล์'); return; }
+    if(!directDownload(blob,filename)) toast('ดาวน์โหลดไม่ได้ ลองกดปุ่ม ⋯ แล้วเลือก "เปิดด้วยเบราว์เซอร์อื่น"');
+    return;
+  }
+  if(isAndroid){
+    pendingExport={blob,filename};
+    $('#dlgAndroidNotice').showModal();
+    return;
+  }
+  if(!directDownload(blob,filename)) toast('ดาวน์โหลดไม่ได้ ใช้ปุ่ม "คัดลอกตาราง" แทน');
 });
 
 /* ---------- misc ---------- */
