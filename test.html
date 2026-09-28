@@ -138,7 +138,7 @@
   <!-- Summary -->
   <section id="panel-sum" class="pt-4">
     <div class="flex flex-wrap items-center justify-between gap-3 mb-3">
-      <p class="text-muted text-sm">คลิกแต่ละวัตถุดิบเพื่อดูว่ามาจากเมนูไหน (เทียบคอลัมน์ C–G ใน Excel)</p>
+      <p class="text-muted text-sm hidden">คลิกแต่ละวัตถุดิบเพื่อดูว่ามาจากเมนูไหน (เทียบคอลัมน์ C–G ใน Excel)</p>
       <label class="flex items-center gap-2 text-sm"><input id="hideZero" type="checkbox" class="accent-[var(--accent)]" checked> ซ่อนวัตถุดิบที่ไม่ได้ใช้</label>
     </div>
     <div class="rounded-xl border border-line bg-surface overflow-hidden" style="box-shadow:var(--shadow)">
@@ -175,7 +175,9 @@
         <div id="masterName" class="font-medium"></div>
         <div class="text-muted text-sm">อ่านจากคอลัมน์ B–I ของชีต Template: B วัตถุดิบ, C เมนู, D นน.ที่ใช้, E หน่วย, H สูตรรวม/ตัวหาร, I หน่วยเบิก</div>
       </div>
-      <div class="flex gap-2">
+      <div class="flex flex-wrap gap-2">
+        <button id="btnMasterTemplate" class="px-3 py-2 rounded-lg border border-line bg-surface hover:bg-sunken text-sm font-medium">ดาวน์โหลด Template</button>
+        <button id="btnMasterHistory" class="px-3 py-2 rounded-lg border border-line bg-surface hover:bg-sunken text-sm font-medium">ประวัติ Master</button>
         <label for="fileMaster" class="px-3 py-2 rounded-lg border border-line bg-surface hover:bg-sunken text-sm font-medium cursor-pointer">อัปโหลด Master ใหม่</label>
         <input id="fileMaster" type="file" accept=".xlsx,.xlsm,.xls" class="sr-only">
         <button id="btnResetMaster" class="px-3 py-2 rounded-lg border border-line bg-surface hover:bg-sunken text-sm font-medium">ใช้ค่าเริ่มต้น</button>
@@ -258,6 +260,26 @@
   </div>
 </dialog>
 
+<!-- Master History dialog -->
+<dialog id="dlgMasterHistory" aria-labelledby="dlgMasterHistoryTitle">
+  <div class="flex flex-col max-h-[calc(100vh-34px)]">
+    <div class="px-5 pt-4 pb-3 border-b border-line flex items-start justify-between gap-3">
+      <div>
+        <div class="eyebrow">ประวัติ Master</div>
+        <h2 id="dlgMasterHistoryTitle" class="text-lg font-semibold">สูตรที่เคยอัปโหลด</h2>
+        <p class="text-muted text-xs mt-1">เก็บไว้ในเบราว์เซอร์นี้เท่านั้น สูงสุด 15 รายการล่าสุด · เปิดครั้งหน้าจะใช้ Master ล่าสุดที่เลือกไว้อัตโนมัติ</p>
+        <p id="masterHistoryStorageInfo" class="text-muted text-xs mt-1"></p>
+      </div>
+      <button id="dlgMasterHistoryClose" class="px-2 py-1 rounded-md hover:bg-sunken text-muted" aria-label="ปิด">✕</button>
+    </div>
+    <div class="px-5 py-4 overflow-y-auto flex flex-col gap-2" id="masterHistoryList"></div>
+    <div class="px-5 py-3 border-t border-line flex flex-wrap justify-between gap-2">
+      <button id="btnMasterHistoryClear" class="px-3 py-2 rounded-lg border border-line text-accent hover:bg-accent-soft text-sm font-medium">ล้างประวัติ Master ทั้งหมด</button>
+      <button id="dlgMasterHistoryCancel" class="px-4 py-2 rounded-lg border border-line hover:bg-sunken font-medium">ปิด</button>
+    </div>
+  </div>
+</dialog>
+
 <!-- Android download notice -->
 <dialog id="dlgAndroidNotice" aria-labelledby="dlgAndroidTitle">
   <div class="flex flex-col max-h-[calc(100vh-34px)]">
@@ -314,8 +336,29 @@ const UA = navigator.userAgent || '';
 const isIOS = /iPad|iPhone|iPod/.test(UA) || (navigator.platform==='MacIntel' && navigator.maxTouchPoints>1);
 const isAndroid = /Android/.test(UA);
 
-let master = DEFAULT_MASTER, masterName = 'MaisonrRoru-ICS-18Sep69.xlsx (ค่าเริ่มต้น)';
-try { const s = JSON.parse(localStorage.getItem('ics-master')||'null'); if (s && s.groups?.length) { master = s.groups; masterName = s.name; } } catch(e){}
+const MASTER_DEFAULT_NAME='MaisonrRoru-ICS-18Sep69.xlsx (ค่าเริ่มต้น)';
+const MASTER_HISTORY_KEY='ics-master-history';
+const MASTER_ACTIVE_KEY='ics-master-active';
+const MASTER_HISTORY_MAX=15;
+let master = DEFAULT_MASTER, masterName = MASTER_DEFAULT_NAME, activeMasterId='default';
+(function initMaster(){
+  // migrate the old single-slot master (pre-history versions) into master history once
+  try{
+    const legacy = JSON.parse(localStorage.getItem('ics-master')||'null');
+    if(legacy && legacy.groups?.length && !loadMasterHistory().length){
+      const id='m'+Date.now().toString(36);
+      addMasterHistoryEntry({id, ts:Date.now(), name: legacy.name||'Master ที่เคยอัปโหลด', groups: legacy.groups});
+      setActiveMaster(id);
+      localStorage.removeItem('ics-master');
+    }
+  }catch(_){}
+  const activeId=getActiveMaster();
+  if(activeId && activeId!=='default'){
+    const h=loadMasterHistory().find(x=>x.id===activeId);
+    if(h){ master=h.groups; masterName=h.name; activeMasterId=h.id; return; }
+  }
+  activeMasterId='default';
+})();
 
 let sales = [];
 let source = null;
@@ -534,7 +577,7 @@ $('#dlgOk').addEventListener('click',()=>{
   if(!P._parsed) return;
   sales=P._parsed.rows.map(r=>({desc:r.desc,qty:r.qty}));
   source={name:`${P.name} · ${P.sheet} · ${colName(P.desc)}/${colName(P.qty)}`};
-  saveHistoryEntrySafe({
+  saveEntrySafe('sales', {
     id: Date.now().toString(36)+Math.random().toString(36).slice(2,7),
     ts: Date.now(),
     fileName: P.name,
@@ -577,8 +620,8 @@ function fmtBytes(n){
   if(n<1024*1024) return (n/1024).toFixed(1)+' KB';
   return (n/1024/1024).toFixed(2)+' MB';
 }
-function renderStorageUsage(){
-  const el=$('#historyStorageInfo'); if(!el) return;
+function renderStorageUsage(elId){
+  const el=$('#'+(elId||'historyStorageInfo')); if(!el) return;
   const {usedBytes,quotaBytes,remainingBytes}=estimateStorageUsage();
   const pct=Math.min(100,Math.round(usedBytes/quotaBytes*100));
   el.textContent=`ใช้พื้นที่ไป ${fmtBytes(usedBytes)} จาก ~${fmtBytes(quotaBytes)} (เหลือ ~${fmtBytes(remainingBytes)}, ${pct}%)`;
@@ -590,25 +633,29 @@ function willExceedQuota(entry){
   const {usedBytes,quotaBytes}=estimateStorageUsage();
   return (usedBytes+bytes) > quotaBytes;
 }
-let pendingHistoryEntry=null;
-function saveHistoryEntrySafe(entry){
+let pendingSave=null; // {type:'sales'|'master', entry}
+function saveEntrySafe(type, entry){
   if(willExceedQuota(entry)){
-    pendingHistoryEntry=entry;
-    renderStorageUsage();
+    pendingSave={type, entry};
+    renderStorageUsage(); renderStorageUsage('masterHistoryStorageInfo');
     $('#dlgQuotaWarn').showModal();
     return;
   }
-  addHistoryEntry(entry);
+  if(type==='sales') addHistoryEntry(entry); else addMasterHistoryEntry(entry);
 }
-$('#dlgQuotaClose').addEventListener('click',()=>{ pendingHistoryEntry=null; $('#dlgQuotaWarn').close(); });
-$('#dlgQuotaSkip').addEventListener('click',()=>{ pendingHistoryEntry=null; $('#dlgQuotaWarn').close(); toast('ข้ามการบันทึกประวัติครั้งนี้'); });
+$('#dlgQuotaClose').addEventListener('click',()=>{ pendingSave=null; $('#dlgQuotaWarn').close(); });
+$('#dlgQuotaSkip').addEventListener('click',()=>{ pendingSave=null; $('#dlgQuotaWarn').close(); toast('ข้ามการบันทึกประวัติครั้งนี้'); });
 $('#dlgQuotaClearSave').addEventListener('click',()=>{
-  saveHistory([]);
-  if(pendingHistoryEntry){ addHistoryEntry(pendingHistoryEntry); toast('ล้างประวัติเก่าและบันทึกรายการนี้แล้ว'); }
-  pendingHistoryEntry=null; $('#dlgQuotaWarn').close();
+  if(pendingSave){
+    if(pendingSave.type==='sales'){ saveHistory([]); addHistoryEntry(pendingSave.entry); }
+    else { saveMasterHistory([]); addMasterHistoryEntry(pendingSave.entry); }
+    toast('ล้างประวัติเก่าและบันทึกรายการนี้แล้ว');
+  }
+  pendingSave=null; $('#dlgQuotaWarn').close();
 });
 $('#dlgQuotaOpenHistory').addEventListener('click',()=>{
-  pendingHistoryEntry=null; $('#dlgQuotaWarn').close();
+  const type=pendingSave?.type; pendingSave=null; $('#dlgQuotaWarn').close();
+  if(type==='master'){ renderMasterHistoryList(); $('#dlgMasterHistory').showModal(); return; }
   multiSelectMode=false; selectedHistoryIds.clear(); updateMultiUI(); renderHistoryList(); renderStorageUsage(); $('#dlgHistory').showModal();
 });
 
@@ -670,7 +717,7 @@ function mergeSelectedHistory(){
   const label = names.length<=3 ? names.join(', ') : `${names.slice(0,3).join(', ')} +${names.length-3} ไฟล์`;
   sales=mergedSales.map(s=>({desc:s.desc,qty:s.qty}));
   source={name:`รวม ${chosen.length} ไฟล์: ${label}`};
-  saveHistoryEntrySafe({
+  saveEntrySafe('sales', {
     id: Date.now().toString(36)+Math.random().toString(36).slice(2,7),
     ts: Date.now(),
     fileName: `รวม ${chosen.length} ไฟล์ (${label})`,
@@ -733,13 +780,158 @@ $('#fileMaster').addEventListener('change',async e=>{
     const wb=XLSX.read(await f.arrayBuffer(),{type:'array',cellFormula:true});
     const res=parseMaster(wb);
     if(!res){ toast('ไม่พบสูตรในคอลัมน์ B–I (ต้องมีชื่อวัตถุดิบในคอลัมน์ B และสูตร =SUM(G..) ในคอลัมน์ H)'); return; }
-    master=res.groups; masterName=`${f.name} · ชีต ${res.sheet}`;
-    try{ localStorage.setItem('ics-master',JSON.stringify({name:masterName,groups:master})); }catch(_){}
+    const entry={ id:'m'+Date.now().toString(36)+Math.random().toString(36).slice(2,5), ts:Date.now(), name:`${f.name} · ชีต ${res.sheet}`, groups:res.groups };
+    master=entry.groups; masterName=entry.name; activeMasterId=entry.id;
+    setActiveMaster(entry.id);
+    saveEntrySafe('master', entry);
     renderAll(); toast(`โหลด Master แล้ว ${master.length} วัตถุดิบ`);
   }catch(err){ toast('อ่านไฟล์ Master ไม่ได้: '+(err.message||err)); }
 });
-$('#btnResetMaster').addEventListener('click',()=>{ master=DEFAULT_MASTER; masterName='MaisonrRoru-ICS-18Sep69.xlsx (ค่าเริ่มต้น)'; try{localStorage.removeItem('ics-master');}catch(_){} renderAll(); toast('กลับไปใช้ Master ค่าเริ่มต้นแล้ว'); });
+$('#btnResetMaster').addEventListener('click',()=>{ master=DEFAULT_MASTER; masterName=MASTER_DEFAULT_NAME; activeMasterId='default'; setActiveMaster('default'); renderAll(); toast('กลับไปใช้ Master ค่าเริ่มต้นแล้ว'); });
 
+/* ---------- Master history ---------- */
+function loadMasterHistory(){ try{ return JSON.parse(localStorage.getItem(MASTER_HISTORY_KEY)||'[]'); }catch(_){ return []; } }
+function saveMasterHistory(list){ try{ localStorage.setItem(MASTER_HISTORY_KEY, JSON.stringify(list)); return true; }catch(_){ return false; } }
+function addMasterHistoryEntry(entry){
+  let list=loadMasterHistory();
+  list.unshift(entry);
+  while(list.length>MASTER_HISTORY_MAX) list.pop();
+  while(list.length && !saveMasterHistory(list)) list.pop();
+}
+function setActiveMaster(id){ try{ localStorage.setItem(MASTER_ACTIVE_KEY,id); }catch(_){} }
+function getActiveMaster(){ try{ return localStorage.getItem(MASTER_ACTIVE_KEY)||'default'; }catch(_){ return 'default'; } }
+function useMasterEntry(id){
+  if(id==='default'){ master=DEFAULT_MASTER; masterName=MASTER_DEFAULT_NAME; activeMasterId='default'; setActiveMaster('default'); }
+  else{
+    const h=loadMasterHistory().find(x=>x.id===id); if(!h) return;
+    master=h.groups; masterName=h.name; activeMasterId=h.id; setActiveMaster(h.id);
+  }
+  $('#dlgMasterHistory').close(); renderAll(); toast(`ใช้ Master: ${masterName}`);
+}
+function deleteMasterEntry(id){
+  saveMasterHistory(loadMasterHistory().filter(x=>x.id!==id));
+  if(activeMasterId===id){ master=DEFAULT_MASTER; masterName=MASTER_DEFAULT_NAME; activeMasterId='default'; setActiveMaster('default'); renderAll(); }
+  renderMasterHistoryList();
+}
+function renameMasterEntry(id, newName){
+  newName=newName.trim(); if(!newName) return;
+  const list=loadMasterHistory(); const h=list.find(x=>x.id===id); if(!h) return;
+  h.name=newName;
+  if(!saveMasterHistory(list)){ toast('บันทึกชื่อไม่สำเร็จ (พื้นที่เก็บข้อมูลเต็ม)'); return; }
+  if(activeMasterId===id) masterName=newName;
+  renderMaster();
+}
+function renderMasterHistoryList(){
+  renderStorageUsage('masterHistoryStorageInfo');
+  const list=loadMasterHistory(); const box=$('#masterHistoryList');
+  const items=[{id:'default', ts:null, name:MASTER_DEFAULT_NAME, isDefault:true}, ...list];
+  box.innerHTML=items.map(h=>{
+    const active=h.id===activeMasterId;
+    const badge=active?'<div class="mt-1"><span class="text-xs font-semibold text-good">ใช้งานอยู่</span></div>':'';
+    const whenLine=h.isDefault?'สูตรในตัว ไม่ต้องอัปโหลด':esc(fmtWhen(h.ts));
+    const nameField=h.isDefault
+      ? `<div class="font-medium truncate">${esc(h.name)}</div>`
+      : `<input data-rename="${h.id}" value="${esc(h.name)}" class="px-2 py-1 rounded-md border border-line bg-bg text-sm font-medium w-full">`;
+    return `<div class="rounded-xl border ${active?'border-accent':'border-line'} bg-surface p-4 flex flex-col gap-3">
+      <div class="min-w-0">
+        ${nameField}
+        <div class="text-muted text-xs mt-1">${whenLine}</div>
+        ${badge}
+      </div>
+      <div class="flex flex-wrap justify-end gap-2 shrink-0">
+        <button data-dl-master="${h.id}" class="px-3 py-2 rounded-lg border border-line bg-surface hover:bg-sunken text-sm font-medium" title="ดาวน์โหลดเป็นไฟล์ Template">ดาวน์โหลด</button>
+        ${active?'':`<button data-use-master="${h.id}" class="px-3 py-2 rounded-lg bg-accent text-accent-ink hover:opacity-90 text-sm font-semibold">ใช้ Master นี้</button>`}
+        ${h.isDefault?'':`<button data-del-master="${h.id}" class="px-3 py-2 rounded-lg border border-line text-accent hover:bg-accent-soft text-sm font-medium">ลบ</button>`}
+      </div>
+    </div>`;
+  }).join('');
+}
+$('#btnMasterHistory').addEventListener('click',()=>{ renderMasterHistoryList(); $('#dlgMasterHistory').showModal(); });
+$('#dlgMasterHistoryClose').addEventListener('click',()=>$('#dlgMasterHistory').close());
+$('#dlgMasterHistoryCancel').addEventListener('click',()=>$('#dlgMasterHistory').close());
+$('#masterHistoryList').addEventListener('click',e=>{
+  const u=e.target.closest('[data-use-master]'); if(u){ useMasterEntry(u.dataset.useMaster); return; }
+  const dl=e.target.closest('[data-dl-master]'); if(dl){ downloadMasterEntry(dl.dataset.dlMaster); return; }
+  const d=e.target.closest('[data-del-master]'); if(d){ deleteMasterEntry(d.dataset.delMaster); }
+});
+$('#masterHistoryList').addEventListener('change',e=>{
+  const inp=e.target.closest('[data-rename]'); if(!inp) return;
+  renameMasterEntry(inp.dataset.rename, inp.value);
+});
+const masterHistClearBtn=$('#btnMasterHistoryClear');
+masterHistClearBtn.addEventListener('click',()=>{
+  if(!masterHistClearBtn.dataset.armed){ masterHistClearBtn.dataset.armed='1'; masterHistClearBtn.textContent='กดอีกครั้งเพื่อยืนยัน'; masterHistClearBtn.classList.add('bg-accent-soft'); clearTimeout(masterHistClearBtn._t); masterHistClearBtn._t=setTimeout(resetMasterHistClear,3500); return; }
+  resetMasterHistClear();
+  saveMasterHistory([]);
+  if(activeMasterId!=='default'){ master=DEFAULT_MASTER; masterName=MASTER_DEFAULT_NAME; activeMasterId='default'; setActiveMaster('default'); renderAll(); }
+  renderMasterHistoryList(); toast('ล้างประวัติ Master แล้ว');
+});
+function resetMasterHistClear(){ delete masterHistClearBtn.dataset.armed; masterHistClearBtn.textContent='ล้างประวัติ Master ทั้งหมด'; masterHistClearBtn.classList.remove('bg-accent-soft'); }
+
+
+/* ---------- Master template (Excel) ---------- */
+// Layout matches parseMaster(): B วัตถุดิบ (first row of group), C เมนู, D ปริมาณ, E หน่วย,
+// F จำนวนขาย, G =D*F, H =SUM(G..)/ตัวหาร (first row of group), I หน่วยเบิก
+function buildMasterTemplate(groups){
+  const U=XLSX.utils, wb=U.book_new(), ws={};
+  const C={ink:'18202F',muted:'5C6579',line:'DCE1E9',band:'F4F6F9',white:'FFFFFF',accentSoft:'F6E4E6'};
+  const thin={style:'thin',color:{rgb:C.line}}, box={top:thin,bottom:thin,left:thin,right:thin};
+  const st=(o={})=>({font:{name:'Tahoma',sz:10,color:{rgb:C.ink},...(o.font||{})},alignment:{vertical:'center',...(o.al||{})},border:box,...(o.fill?{fill:{patternType:'solid',fgColor:{rgb:o.fill}}}:{})});
+  const hdr=['ลำดับ','วัตถุดิบ','เมนู (ชื่อตรงกับ POS)','ปริมาณต่อเมนู','หน่วย','จำนวนขาย','รวมที่ใช้','ใช้รวม / ตัวหาร','หน่วยเบิก'];
+  hdr.forEach((h,i)=>{ ws[U.encode_col(i)+'1']={t:'s',v:h,s:st({font:{bold:true,color:{rgb:C.white}},fill:C.ink,al:{horizontal:'center',wrapText:true}})}; });
+  let r=2;
+  groups.forEach((g,gi)=>{
+    const s=r, e=r+g.items.length-1, band=gi%2?C.band:C.white;
+    g.items.forEach((it,k)=>{
+      const first=k===0, cs=st({fill:band});
+      ws['A'+r]= first?{t:'n',v:gi+1,s:st({fill:band,al:{horizontal:'center'}})}:{t:'s',v:'',s:cs};
+      ws['B'+r]= first?{t:'s',v:g.name,s:st({fill:band,font:{bold:true}})}:{t:'s',v:'',s:cs};
+      ws['C'+r]={t:'s',v:it.menu,s:cs};
+      ws['D'+r]={t:'n',v:it.w,s:{...cs,numFmt:'#,##0.###'}};
+      ws['E'+r]={t:'s',v:it.u||g.base||'',s:cs};
+      ws['F'+r]={t:'n',v:0,s:{...st({fill:C.accentSoft}),numFmt:'#,##0'}};
+      ws['G'+r]={t:'n',v:0,f:`D${r}*F${r}`,s:{...cs,numFmt:'#,##0.###'}};
+      ws['H'+r]= first?{t:'n',v:0,f:`SUM(G${s}:G${e})`+(g.div&&g.div!==1?`/${g.div}`:''),s:{...st({fill:band,font:{bold:true}}),numFmt:'#,##0.###'}}:{t:'s',v:'',s:cs};
+      ws['I'+r]= first?{t:'s',v:g.unit||g.base||'',s:cs}:{t:'s',v:'',s:cs};
+      r++;
+    });
+  });
+  ws['!ref']=`A1:I${Math.max(r-1,1)}`;
+  ws['!cols']=[{wch:6},{wch:26},{wch:40},{wch:12},{wch:9},{wch:10},{wch:11},{wch:14},{wch:10}];
+  ws['!rows']=[{hpt:30}];
+  ws['!freeze']={xSplit:0,ySplit:1};
+  ws['!views']=[{state:'frozen',ySplit:1}];
+  U.book_append_sheet(wb,ws,'Template');
+
+  const help=[
+    ['วิธีทำไฟล์ Master สำหรับ Maison Roru ICS'],
+    [''],
+    ['1. ใช้ชีตชื่อ "Template" (ระบบอ่านชีตนี้ก่อน) — 1 วัตถุดิบ = 1 กลุ่มแถวติดกัน'],
+    ['2. แถวแรกของกลุ่ม: ใส่ชื่อวัตถุดิบในคอลัมน์ B'],
+    ['3. ทุกแถวในกลุ่ม: คอลัมน์ C = ชื่อเมนู (สะกดให้ตรงกับ ItemDesc ใน POS), D = ปริมาณต่อ 1 เมนู (ตัวเลข), E = หน่วย'],
+    ['4. แถวแรกของกลุ่ม คอลัมน์ H ต้องเป็นสูตร =SUM(G<แถวแรก>:G<แถวสุดท้าย>) — ถ้าต้องการแปลงหน่วย เช่น กรัม→กิโลกรัม ให้ต่อท้าย /1000'],
+    ['5. แถวแรกของกลุ่ม คอลัมน์ I = หน่วยเบิก (หน่วยหลังหาร)'],
+    ['6. คอลัมน์ F (จำนวนขาย) และ G (=D*F) ไว้ทดลองใน Excel เท่านั้น ระบบคำนวณจากยอดขายเอง'],
+    ['7. เพิ่มวัตถุดิบใหม่: คัดลอกกลุ่มเดิมไปวางต่อท้าย แล้วแก้ช่วงแถวในสูตร H ให้ถูกต้อง'],
+    ['8. บันทึกเป็น .xlsx แล้วกด "อัปโหลด Master ใหม่" ในเว็บ']
+  ];
+  const wh=U.aoa_to_sheet(help);
+  wh['A1'].s={font:{name:'Tahoma',sz:13,bold:true,color:{rgb:C.ink}}};
+  for(let i=2;i<=help.length;i++){ if(wh['A'+i]) wh['A'+i].s={font:{name:'Tahoma',sz:10,color:{rgb:C.ink}}}; }
+  wh['!cols']=[{wch:110}];
+  U.book_append_sheet(wb,wh,'วิธีใช้');
+  return wb;
+}
+function safeFileBase(name){
+  return String(name||'master').split(' · ')[0].replace(/\s*\(ค่าเริ่มต้น\)\s*$/,'').replace(/\.[^.]+$/,'').replace(/[\\/:*?"<>|]+/g,'_').trim()||'master';
+}
+function downloadMasterEntry(id){
+  let groups, name;
+  if(id==='default'){ groups=DEFAULT_MASTER; name=MASTER_DEFAULT_NAME; }
+  else{ const h=loadMasterHistory().find(x=>x.id===id); if(!h){ toast('ไม่พบรายการนี้'); return; } groups=h.groups; name=h.name; }
+  deliverWorkbook(buildMasterTemplate(groups), `master-${safeFileBase(name)}.xlsx`);
+}
+$('#btnMasterTemplate').addEventListener('click',()=>deliverWorkbook(buildMasterTemplate(DEFAULT_MASTER),'master-template.xlsx'));
 
 /* ---------- Excel workbook with Dashboard ---------- */
 function buildWorkbook(){
@@ -872,15 +1064,17 @@ $('#dlgAndroidContinue').addEventListener('click',()=>{
   $('#dlgAndroidNotice').close();
   if(pendingExport){ if(!directDownload(pendingExport.blob,pendingExport.filename)) toast('ดาวน์โหลดไม่ได้ ลองกดปุ่ม ⋯ แล้วเลือก "เปิดด้วยเบราว์เซอร์อื่น"'); pendingExport=null; }
 });
-$('#btnExport').addEventListener('click',async()=>{
+$('#btnExport').addEventListener('click',()=>{
   if(!source) return;
-  const wb=buildWorkbook();
   const base=(source.name.split(' · ')[0]||'sales').replace(/\.[^.]+$/,'');
-  const filename=`export-ICS-${base}.xlsx`;
+  deliverWorkbook(buildWorkbook(), `export-ICS-${base}.xlsx`, 'ดาวน์โหลดไม่ได้ ใช้ปุ่ม "คัดลอกตาราง" แทน');
+});
+// Shared download path: Claude downloads capability → iOS share sheet → Android notice → direct download
+async function deliverWorkbook(wb, filename, failMsg='ดาวน์โหลดไม่ได้ ลองเปิดด้วยเบราว์เซอร์อื่น'){
   const dl = window.claude?.use ? await window.claude.use('downloads').catch(()=>null) : null;
   if(dl){
     try{ const out=XLSX.write(wb,{bookType:'xlsx',type:'array'}); await dl.save({filename,data:new Blob([out])}); toast('บันทึกไฟล์แล้ว'); }
-    catch(e){ if(e?.code!=='declined') toast('บันทึกไฟล์ไม่ได้ ใช้ปุ่ม "คัดลอกตาราง" แทน'); }
+    catch(e){ if(e?.code!=='declined') toast(failMsg); }
     return;
   }
   const blob=xlsxBlob(wb);
@@ -895,8 +1089,8 @@ $('#btnExport').addEventListener('click',async()=>{
     $('#dlgAndroidNotice').showModal();
     return;
   }
-  if(!directDownload(blob,filename)) toast('ดาวน์โหลดไม่ได้ ใช้ปุ่ม "คัดลอกตาราง" แทน');
-});
+  if(!directDownload(blob,filename)) toast(failMsg);
+}
 
 /* ---------- misc ---------- */
 $('#tabs').addEventListener('click',e=>{ const b=e.target.closest('[data-tab]'); if(b){ tab=b.dataset.tab; renderTabs(); } });
