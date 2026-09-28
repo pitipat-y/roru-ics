@@ -58,6 +58,10 @@
       <p class="text-muted text-sm mt-1">ใส่รหัสผ่านเพื่อเข้าใช้งาน</p>
     </div>
     <label class="flex flex-col gap-1.5 text-sm">
+      <span class="font-medium">ชื่อผู้ใช้</span>
+      <input id="gateUser" type="text" autocomplete="username" value="ics" class="px-3 py-2.5 rounded-lg border border-line bg-bg text-base" required>
+    </label>
+    <label class="flex flex-col gap-1.5 text-sm">
       <span class="font-medium">รหัสผ่าน</span>
       <input id="gatePwd" type="password" autocomplete="current-password" class="px-3 py-2.5 rounded-lg border border-line bg-bg text-base" required>
     </label>
@@ -633,18 +637,21 @@ async function sha256(t){
   if(window.crypto?.subtle){ const b=await crypto.subtle.digest('SHA-256',new TextEncoder().encode(t)); return [...new Uint8Array(b)].map(x=>x.toString(16).padStart(2,'0')).join(''); }
   return null;
 }
+const DEFAULT_USER='ics';
 function unlock(){ $('#gate').hidden=true; $('#app').hidden=false; renderAll(); }
-function lock(){ try{sessionStorage.removeItem('ics-auth');}catch(_){} sales=[]; source=null; P.wb=null; $('#app').hidden=true; $('#gate').hidden=false; $('#gatePwd').value=''; $('#gatePwd').focus(); }
+function lock(){ try{sessionStorage.removeItem('ics-auth');}catch(_){} sales=[]; source=null; P.wb=null; $('#app').hidden=true; $('#gate').hidden=false; $('#gateUser').value=DEFAULT_USER; $('#gatePwd').value=''; $('#gatePwd').focus(); }
 $('#gateForm').addEventListener('submit',async e=>{
   e.preventDefault();
+  const u=$('#gateUser').value.trim();
   const v=$('#gatePwd').value; const h=await sha256(v);
   const fallback = b64dec(front)+b64dec(rear);
-  const ok = (h ? h===PWD_HASH : false) || v===fallback;
-  if(ok){ $('#gateErr').hidden=true; try{sessionStorage.setItem('ics-auth',PWD_HASH);}catch(_){} unlock(); }
+  const pwOk = (h ? h===PWD_HASH : false) || v===fallback;
+  const ok = u===DEFAULT_USER && pwOk;
+  if(ok){ $('#gateErr').hidden=true; try{sessionStorage.setItem('ics-auth',h||fallback);}catch(_){} unlock(); }
   else { $('#gateErr').hidden=false; $('#gatePwd').select(); }
 });
 $('#btnLogout').addEventListener('click',lock);
-let authed=false; try{ authed=sessionStorage.getItem('ics-auth')===PWD_HASH; }catch(_){}
+let authed=false; try{ const st=sessionStorage.getItem('ics-auth'); authed = st===PWD_HASH || (st && st===b64dec(front)+b64dec(rear)); }catch(_){}
 if(authed) unlock(); else $('#gatePwd').focus();
 })();
 </script>
