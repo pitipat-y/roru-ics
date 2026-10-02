@@ -14,31 +14,27 @@
   };
   document.getElementById('scrim').onclick = () => app.classList.remove('open');
 
-  side.querySelectorAll('a').forEach(a => a.addEventListener('click', () => {
-    side.querySelectorAll('a').forEach(x => x.removeAttribute('aria-current'));
-    a.setAttribute('aria-current', 'page');
+  // deeplink: index.html#report → เปิด report.html; รับเฉพาะชื่อที่มีในเมนู (ไม่ใช่ path อิสระ)
+  const frame = document.querySelector('iframe');
+  const route = () => {
+    const links = [...side.querySelectorAll('a')];
+    const a = links.find(x => x.hash === location.hash) || links[0];
+    links.forEach(x => x.toggleAttribute('aria-current', x === a));
+    if (a === links[0] && location.hash !== a.hash) history.replaceState(null, '', a.hash);
     document.getElementById('pageTitle').textContent = a.textContent;
+    const src = a.hash.slice(1) + '.html';
+    // replace = ไม่เพิ่ม history ของ iframe, ปุ่ม back ย้อนตาม hash อย่างเดียว
+    try { if (!frame.contentWindow.location.href.endsWith('/' + src)) frame.contentWindow.location.replace(src); } catch (_) { frame.src = src; }
     app.classList.remove('open');
-  }));
+  };
+  addEventListener('hashchange', route);
+  route();
 
-  // avatar: แสดงเมื่อ login (cookie ics-auth จาก ICS ใน iframe — same origin)
-  // ponytail: ผู้ใช้มีคนเดียว (ics) ชื่อเลย hardcode; ดึงจาก server เมื่อมีระบบ user จริง
-  const USER = 'ics';
-  const authed = () => /(?:^|; )ics-auth=[^;]+/.test(document.cookie);
-  const renderUser = () => {
-    document.getElementById('user').hidden = !authed();
-    document.querySelectorAll('[data-name]').forEach(el => el.textContent = USER);
-    document.querySelectorAll('[data-initial]').forEach(el => el.textContent = USER[0]);
-  };
+  // ผู้ใช้: หน้านี้ผ่าน ICS_AUTH.guard() แล้ว (js/auth.js) — ponytail: ผู้ใช้คนเดียว ชื่อมาจาก auth.js
+  document.querySelectorAll('[data-name]').forEach(el => el.textContent = ICS_AUTH.USER);
+  document.querySelectorAll('[data-initial]').forEach(el => el.textContent = ICS_AUTH.USER[0]);
   document.getElementById('userMenu').addEventListener('toggle', e => document.getElementById('user').classList.toggle('on', e.newState === 'open'));
-  addEventListener('message', e => { if (e.source === document.querySelector('iframe').contentWindow && e.data === 'ics-auth') renderUser(); });
-  document.getElementById('logout').onclick = () => {
-    document.cookie = 'ics-auth=; max-age=0; path=/; SameSite=Strict';
-    document.getElementById('userMenu').hidePopover();
-    document.querySelector('iframe').contentWindow.location.reload();
-    renderUser();
-  };
-  renderUser();
+  document.getElementById('logout').onclick = ICS_AUTH.logout;
 
   // ลากขอบขวาเพื่อยืด/หด (160–480px)
   grip.addEventListener('pointerdown', e => {

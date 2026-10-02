@@ -1,0 +1,45 @@
+<!doctype html>
+<html lang="th">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>Maison Roru Login</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans+Thai:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500;600&display=swap">
+<link rel="stylesheet" href="css/style.css?v=20261003179">
+
+<script src="js/auth.js?v=20261003179"></script>
+<script>if (ICS_AUTH.ok()) location.replace('index.html' + location.hash); else if (top !== self) top.location.replace('login.html' + location.hash);</script>
+</head>
+<body>
+<div id="gate" class="min-h-screen flex items-center justify-center px-4 py-10">
+  <form id="gateForm" class="w-full max-w-sm rounded-2xl border border-line bg-surface p-6 sm:p-7 flex flex-col gap-4" style="box-shadow:var(--shadow)">
+    <div>
+      <div class="eyebrow">Maison Roru · ICONSIAM · S102</div>
+      <h1 class="text-xl font-semibold mt-1">คำนวณการใช้วัตถุดิบ</h1>
+      <p class="text-muted text-sm mt-1">ใส่รหัสผ่านเพื่อเข้าใช้งาน</p>
+    </div>
+    <label class="flex flex-col gap-1.5 text-sm">
+      <span class="font-medium">ชื่อผู้ใช้</span>
+      <input id="gateUser" type="text" autocomplete="username" value="ics" class="px-3 py-2.5 rounded-lg border border-line bg-bg text-base" required>
+    </label>
+    <label class="flex flex-col gap-1.5 text-sm">
+      <span class="font-medium">รหัสผ่าน</span>
+      <input id="gatePwd" type="password" autocomplete="current-password" class="px-3 py-2.5 rounded-lg border border-line bg-bg text-base" required>
+    </label>
+    <div id="gateErr" class="text-sm text-accent" hidden>รหัสผ่านไม่ถูกต้อง ลองใหม่อีกครั้ง</div>
+    <button class="btn btn-primary btn-lg" data-icon="login"><span class="lbl">เข้าสู่ระบบ</span></button>
+  </form>
+</div>
+<script>
+// login สำเร็จ → กลับไปหน้าที่ขอไว้ (#material, #report) ผ่าน index.html เท่านั้น
+const $ = s => document.querySelector(s);
+$('#gatePwd').focus();
+$('#gateForm').addEventListener('submit', async e => {
+  e.preventDefault();
+  if (await ICS_AUTH.login($('#gateUser').value.trim(), $('#gatePwd').value)) location.replace('index.html' + location.hash);
+  else { $('#gateErr').hidden = false; $('#gatePwd').select(); }
+});
+</script>
+</body>
+</html>

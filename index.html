@@ -4,9 +4,11 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
 <title>Maison Roru CMS</title>
+<script src="js/auth.js?v=20261003179"></script>
+<script>ICS_AUTH.guard()</script>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans+Thai:wght@400;500;600;700&display=swap">
-<link rel="stylesheet" href="css/style.css?v=20261003617">
-<link rel="stylesheet" href="css/cms.css?v=20261003617">
+<link rel="stylesheet" href="css/style.css?v=20261003179">
+<link rel="stylesheet" href="css/cms.css?v=20261003179">
 </head>
 <body>
 <div class="app" id="app">
@@ -15,7 +17,7 @@
       <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M4 6h16M4 12h16M4 18h16"/></svg>
     </button>
     <div><div class="eyebrow">Maison Roru</div><div class="font-semibold" id="pageTitle">คำนวณวัตถุดิบ</div></div>
-    <button class="user" id="user" popovertarget="userMenu" aria-label="บัญชีผู้ใช้" aria-haspopup="menu" hidden>
+    <button class="user" id="user" popovertarget="userMenu" aria-label="บัญชีผู้ใช้" aria-haspopup="menu">
       <span class="avatar" data-initial></span>
       <span class="meta"><span class="text-sm font-semibold" data-name></span><small>ผู้ใช้งาน</small></span>
       <svg class="chev" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="m6 9 6 6 6-6"/></svg>
@@ -30,15 +32,15 @@
   </header>
   <div class="body">
     <nav class="side" id="side">
-      <a href="test.html" target="main" aria-current="page">คำนวณวัตถุดิบ</a>
-      <a href="report.html" target="main">รายงานการขาย</a>
-      <!-- เพิ่มเมนูอื่น: <a href="xxx.html" target="main">ชื่อเมนู</a> -->
+      <a href="#material">คำนวณวัตถุดิบ</a>
+      <a href="#report">รายงานการขาย</a>
+      <!-- เพิ่มเมนูอื่น: <a href="#xxx">ชื่อเมนู</a> → เปิด xxx.html, deeplink: index.html#xxx -->
       <div class="grip" id="grip" title="ลากเพื่อปรับความกว้าง"></div>
     </nav>
     <div class="scrim" id="scrim"></div>
-    <iframe name="main" src="test.html" title="เนื้อหา"></iframe>
+    <iframe name="main" title="เนื้อหา"></iframe>
   </div>
 </div>
-<script src="js/cms.js?v=20261003617"></script>
+<script src="js/cms.js?v=20261003179"></script>
 </body>
 </html>

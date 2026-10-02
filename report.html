@@ -4,9 +4,11 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
 <title>Sales Report</title>
+<script src="js/auth.js?v=20261003179"></script>
+<script>ICS_AUTH.guard('report')</script>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans+Thai:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500;600&display=swap">
-<link rel="stylesheet" href="css/style.css?v=20261003617">
-<link rel="stylesheet" href="css/report.css?v=20261003617">
+<link rel="stylesheet" href="css/style.css?v=20261003179">
+<link rel="stylesheet" href="css/report.css?v=20261003179">
 </head>
 <body>
 <main class="rp">
@@ -18,8 +20,7 @@
     </div>
   </header>
 
-  <div id="locked" class="rp-empty" hidden>กรุณาเข้าสู่ระบบที่หน้า <a href="test.html">คำนวณวัตถุดิบ</a> ก่อน</div>
-  <div id="empty" class="rp-empty" hidden>ยังไม่มีประวัติยอดขาย อัปโหลดไฟล์ที่หน้า <a href="test.html">คำนวณวัตถุดิบ</a> ก่อน</div>
+  <div id="empty" class="rp-empty" hidden>ยังไม่มีประวัติยอดขาย อัปโหลดไฟล์ที่หน้า <a href="index.html#material" target="_top">คำนวณวัตถุดิบ</a> ก่อน</div>
 
   <div id="report" hidden>
     <section class="rp-card">
@@ -53,6 +54,6 @@
     </section>
   </div>
 </main>
-<script src="js/report.js?v=20261003617"></script>
+<script src="js/report.js?v=20261003179"></script>
 </body>
 </html>

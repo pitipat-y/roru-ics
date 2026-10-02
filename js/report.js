@@ -5,13 +5,10 @@ const norm = s => String(s ?? '').normalize('NFD').replace(/[̀-ͯ]/g,'').trim()
 const fmt = n => n.toLocaleString('th-TH', {maximumFractionDigits: 2});
 const when = ts => new Date(ts).toLocaleString('th-TH', {dateStyle: 'medium', timeStyle: 'short'});
 
-// ponytail: เช็คแค่ว่ามี cookie (auth ทั้งระบบอยู่ฝั่ง client อยู่แล้ว) — ตรวจจริงที่ server เมื่อมี backend
-if (!/(?:^|; )ics-auth=[^;]+/.test(document.cookie)) { $('#locked').hidden = false; return; }
-
 let history = [];
 try { history = JSON.parse(localStorage.getItem('ics-history') || '[]'); } catch (_) {}
 if (!history.length) {
-  // file:// บางเบราว์เซอร์ (Firefox) แยก localStorage ต่อไฟล์ — หน้านี้มองไม่เห็นประวัติของ test.html
+  // file:// บางเบราว์เซอร์ (Firefox) แยก localStorage ต่อไฟล์ — หน้านี้มองไม่เห็นประวัติของ material.html
   if (location.protocol === 'file:') $('#empty').innerHTML = 'ไม่พบประวัติ: เปิดไฟล์ตรงจากเครื่อง (file://) เบราว์เซอร์จะแยกข้อมูลแต่ละหน้า<br>ให้เปิดผ่าน server แทน เช่น <code>python3 -m http.server</code> แล้วเข้า <code>http://localhost:8000</code>';
   $('#empty').hidden = false; return;
 }

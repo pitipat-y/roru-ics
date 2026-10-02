@@ -820,33 +820,7 @@ $('#salesHead').addEventListener('click',e=>{
 });
 $('#hideZero').addEventListener('change',renderSum);
 
-/* ---------- Password gate ---------- */
-const PWD_HASH='adfd6d2e9530e67fab887cb2ff37d693397a40f2546e6c4b9c39ca9d3faa998d';
-const front = "aWNz";
-const rear = "MTIzNA==";
-function b64dec(s){ try{ return atob(s); }catch(_){ return ''; } }
-async function sha256(t){
-  if(window.crypto?.subtle){ const b=await crypto.subtle.digest('SHA-256',new TextEncoder().encode(t)); return [...new Uint8Array(b)].map(x=>x.toString(16).padStart(2,'0')).join(''); }
-  return null;
-}
-const DEFAULT_USER='ics';
-const notifyParent=()=>{ if(top!==self) parent.postMessage('ics-auth','*'); }; // CMS: อัปเดต avatar (แค่สัญญาณ ไม่มีข้อมูล, '*' เพราะ file:// origin เป็น null)
-function unlock(){ $('#gate').hidden=true; $('#app').hidden=false; renderAll(); notifyParent(); }
-const AUTH_COOKIE='ics-auth', AUTH_MAX_AGE=30*24*3600; // 1 month
-function getAuth(){ const m=document.cookie.match(/(?:^|; )ics-auth=([^;]*)/); return m?decodeURIComponent(m[1]):null; }
-function setAuth(v){ document.cookie=`${AUTH_COOKIE}=${encodeURIComponent(v)}; max-age=${v?AUTH_MAX_AGE:0}; path=/; SameSite=Strict`; }
-function lock(){ setAuth(''); sales=[]; source=null; P.wb=null; $('#app').hidden=true; $('#gate').hidden=false; $('#gateUser').value=DEFAULT_USER; $('#gatePwd').value=''; $('#gatePwd').focus(); notifyParent(); }
-$('#gateForm').addEventListener('submit',async e=>{
-  e.preventDefault();
-  const u=$('#gateUser').value.trim();
-  const v=$('#gatePwd').value; const h=await sha256(v);
-  const fallback = b64dec(front)+b64dec(rear);
-  const pwOk = (h ? h===PWD_HASH : false) || v===fallback;
-  const ok = u===DEFAULT_USER && pwOk;
-  if(ok){ $('#gateErr').hidden=true; setAuth(h||fallback); unlock(); }
-  else { $('#gateErr').hidden=false; $('#gatePwd').select(); }
-});
-$('#btnLogout').addEventListener('click',lock);
-let authed=false; try{ const st=getAuth(); authed = st===PWD_HASH || (st && st===b64dec(front)+b64dec(rear)); }catch(_){}
-if(authed) unlock(); else $('#gatePwd').focus();
+/* ---------- Auth: login.html + guard ใน <head> (js/auth.js) ---------- */
+$('#btnLogout').addEventListener('click',ICS_AUTH.logout);
+renderAll();
 })();
