@@ -1,0 +1,58 @@
+<!doctype html>
+<html lang="th">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>Sales Report</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans+Thai:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500;600&display=swap">
+<link rel="stylesheet" href="css/style.css?v=20261003617">
+<link rel="stylesheet" href="css/report.css?v=20261003617">
+</head>
+<body>
+<main class="rp">
+  <header class="rp-head">
+    <div>
+      <div class="eyebrow">Maison Roru · ICONSIAM · S102</div>
+      <h1>รายงานการขาย</h1>
+      <p class="muted">รวมยอดจากไฟล์ในประวัติ ถ้าชื่อไฟล์ซ้ำกันจะใช้ไฟล์ล่าสุด</p>
+    </div>
+  </header>
+
+  <div id="locked" class="rp-empty" hidden>กรุณาเข้าสู่ระบบที่หน้า <a href="test.html">คำนวณวัตถุดิบ</a> ก่อน</div>
+  <div id="empty" class="rp-empty" hidden>ยังไม่มีประวัติยอดขาย อัปโหลดไฟล์ที่หน้า <a href="test.html">คำนวณวัตถุดิบ</a> ก่อน</div>
+
+  <div id="report" hidden>
+    <section class="rp-card">
+      <div class="rp-card-head">
+        <h2>ไฟล์ที่ใช้ <span class="muted" id="fileCount"></span></h2>
+        <div class="rp-actions"><button class="btn btn-ghost" id="selAll">เลือกทั้งหมด</button><button class="btn btn-ghost" id="selNone">ไม่เลือก</button></div>
+      </div>
+      <ul class="rp-files" id="files"></ul>
+    </section>
+
+    <section class="rp-stats">
+      <div class="rp-stat"><small>ไฟล์</small><b id="stFiles">0</b></div>
+      <div class="rp-stat"><small>เมนู</small><b id="stMenus">0</b></div>
+      <div class="rp-stat"><small>จำนวนขายรวม</small><b id="stQty">0</b></div>
+    </section>
+
+    <section class="rp-card">
+      <div class="rp-card-head"><h2>ยอดขายแยกตามไฟล์</h2></div>
+      <div class="bars" id="chartFiles"></div>
+    </section>
+
+    <section class="rp-card">
+      <div class="rp-card-head">
+        <h2>ยอดขายแยกตามเมนู</h2>
+        <div class="rp-actions">
+          <input id="q" type="search" placeholder="ค้นหาเมนู">
+          <select id="top"><option value="10">Top 10</option><option value="20" selected>Top 20</option><option value="0">ทั้งหมด</option></select>
+        </div>
+      </div>
+      <div class="bars" id="chartMenus"></div>
+    </section>
+  </div>
+</main>
+<script src="js/report.js?v=20261003617"></script>
+</body>
+</html>

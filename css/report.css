@@ -1,0 +1,38 @@
+/* Sales report — ใช้ token สีจาก style.css */
+.rp{max-width:72rem;margin:0 auto;padding:0 16px 64px}
+.rp-head{padding:24px 0 20px;border-bottom:1px solid var(--line)}
+.rp-head h1{font-size:26px;font-weight:600;margin:4px 0 0}
+.muted{color:var(--muted)}
+.rp-head p{margin:4px 0 0}
+.rp-empty{margin-top:24px;padding:40px 16px;text-align:center;color:var(--muted);border:1px dashed var(--line);border-radius:16px}
+.rp-empty a{color:var(--accent)}
+.rp-card{margin-top:20px;padding:16px;background:var(--surface);border:1px solid var(--line);border-radius:16px;box-shadow:var(--shadow)}
+.rp-card-head{display:flex;flex-wrap:wrap;align-items:center;justify-content:space-between;gap:8px;margin-bottom:12px}
+.rp-card h2{font-size:16px;font-weight:600;margin:0}
+.rp-actions{display:flex;flex-wrap:wrap;gap:8px}
+.rp-actions input,.rp-actions select{padding:7px 10px;border:1px solid var(--line);border-radius:8px;background:var(--bg);color:var(--ink);font:inherit;font-size:14px}
+.rp-files{list-style:none;margin:0;padding:0;display:grid;gap:4px;grid-template-columns:repeat(auto-fill,minmax(260px,1fr))}
+.rp-files label{display:flex;align-items:center;gap:10px;padding:8px 10px;border-radius:8px;cursor:pointer}
+.rp-files label:hover{background:var(--sunken)}
+.rp-files input{accent-color:var(--accent);width:16px;height:16px;flex:none}
+.rp-files li,.rp-files label>span{min-width:0}
+.rp-files .fn{display:block;font-weight:500;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.rp-files small{display:block;color:var(--muted);font-size:12px}
+.rp-files .dup{color:var(--warn)}
+.rp-stats{margin-top:20px;display:grid;grid-template-columns:repeat(3,1fr);gap:12px}
+.rp-stat{padding:14px 16px;background:var(--surface);border:1px solid var(--line);border-radius:14px}
+.rp-stat small{color:var(--muted);font-size:12px}
+.rp-stat b{display:block;font-size:24px;font-weight:600;font-family:"IBM Plex Mono",monospace}
+/* แผนภูมิแท่งแนวนอน: CSS ล้วน */
+.bars{display:grid;grid-template-columns:minmax(120px,max-content) 1fr;gap:6px 12px;align-items:center}
+.bars .lbl{font-size:14px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;max-width:280px}
+.bars .track{display:flex;align-items:center;gap:8px;min-width:0}
+.bars .bar{height:22px;border-radius:4px;background:var(--accent);min-width:2px;transition:width .3s}
+.bars .val{font-family:"IBM Plex Mono",monospace;font-size:13px;color:var(--muted);white-space:nowrap}
+.bars .none{grid-column:1/-1;color:var(--muted);text-align:center;padding:16px}
+#chartFiles .bar{background:var(--info)}
+@media (max-width:640px){
+  .bars{grid-template-columns:1fr;gap:2px}
+  .bars .lbl{max-width:none;margin-top:6px}
+  .rp-stat b{font-size:18px}
+}
