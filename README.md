@@ -6,7 +6,7 @@
 
 | ไฟล์ | หน้าที่ |
 |---|---|
-| `cms.html` | หน้า CMS: แถบหัว, เมนูซ้าย และ iframe ที่เปิด `test.html` |
+| `index.html` | หน้าแรก (CMS): แถบหัว, เมนูซ้าย และ iframe ที่เปิด `test.html` |
 | `css/cms.css`, `js/cms.js` | style และ logic ของ CMS (hamburger, ปรับความกว้างแถบเมนู, user menu) |
 | `test.html` | หน้า ICS (HTML อย่างเดียว) เปิดเดี่ยว ๆ ได้หรือเปิดใน CMS ก็ได้ |
 | `css/style.css` | CSS ที่เขียนเอง และ Tailwind ที่ compile แล้ว |
@@ -23,10 +23,10 @@
 
 ## Deploy
 
-ทุกครั้งที่แก้ css หรือ js ต้องเปลี่ยนเลข `?v=` ใน `test.html` และ `cms.html` เพื่อไม่ให้มือถือใช้ไฟล์เก่าในแคช:
+ทุกครั้งที่แก้ css หรือ js ต้องเปลี่ยนเลข `?v=` ใน `test.html` และ `index.html` เพื่อไม่ให้มือถือใช้ไฟล์เก่าในแคช:
 
 ```sh
-V=$(date +%Y%m%d)$(printf %03d $((RANDOM%1000))); sed -i '' -E "s/\?v=[0-9]+/?v=$V/g" test.html cms.html
+V=$(date +%Y%m%d)$(printf %03d $((RANDOM%1000))); sed -i '' -E "s/\?v=[0-9]+/?v=$V/g" test.html index.html
 ```
 
 ## ข้อมูลที่เก็บในเบราว์เซอร์
