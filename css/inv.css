@@ -1,0 +1,32 @@
+/* ระบบคลัง — ใช้ร่วมกับ report.css + admin.css */
+.num{text-align:right}
+th.num{text-align:right}
+.tbl td a{color:var(--accent);text-decoration:none;font-weight:600}
+.st-warn{background:var(--warn-soft);color:var(--warn);border-color:transparent}
+.st-good{background:var(--good-soft);color:var(--good);border-color:transparent}
+.st-info{background:var(--info-soft);color:var(--info);border-color:transparent}
+.inv-neg{color:var(--accent)} .inv-pos{color:var(--good)}
+.inv-items{color:var(--muted);font-size:13px;max-width:320px}
+.inv-empty{text-align:center;color:var(--muted);padding:28px!important}
+.inv-dlg{width:min(760px,calc(100vw - 24px))}
+.inv-grid{display:grid;grid-template-columns:1fr 2fr;gap:12px}
+.inv-grid .span2{grid-column:1/-1}
+.inv-lines input{width:100%;box-sizing:border-box;padding:7px 8px;border:1px solid var(--line);border-radius:6px;background:var(--bg);color:var(--ink);font:inherit;font-size:14px}
+.inv-lines td{padding:6px 4px;vertical-align:top}
+.inv-lines td:first-child{min-width:160px}
+.inv-lines .li-qty,.inv-lines .li-price{width:90px}
+.inv-lines .li-sum{padding-top:14px;white-space:nowrap}
+.li-bal{display:block;font-size:11px;margin-top:2px}
+.inv-under{display:flex;flex-wrap:wrap;align-items:center;justify-content:space-between;gap:8px;margin-top:10px}
+.inv-under input{flex:1;min-width:180px;padding:8px 10px;border:1px solid var(--line);border-radius:8px;background:var(--bg);color:var(--ink);font:inherit}
+.inv-count{width:100px;padding:6px 8px;border:1px solid var(--line);border-radius:6px;background:var(--bg);color:var(--ink);font:inherit}
+.inv-chk{display:flex;align-items:center;gap:6px;font-size:14px;color:var(--muted)}
+.inv-dl{display:grid;grid-template-columns:max-content 1fr;gap:4px 16px;margin:0 0 12px;font-size:14px}
+.inv-dl dt{color:var(--muted)} .inv-dl dd{margin:0}
+.inv-dlg h2{display:flex;align-items:center;gap:10px}
+.inv-search{width:100%;box-sizing:border-box;margin-top:20px;padding:12px 14px;font:inherit;font-size:16px;border:1px solid var(--line);border-radius:12px;background:var(--surface);color:var(--ink)}
+.inv-chips{display:flex;flex-wrap:wrap;gap:8px;margin-top:12px}
+.inv-chip{display:inline-flex;gap:8px;align-items:center;padding:6px 12px;border:1px solid var(--line);border-radius:999px;background:var(--surface);color:var(--ink);font:inherit;font-size:14px;cursor:pointer}
+.inv-chip span{color:var(--muted);font-size:12px}
+.inv-chip:hover{border-color:var(--muted)} .inv-chip.on{background:var(--accent-soft);border-color:var(--accent);color:var(--accent)}
+@media (max-width:640px){ .inv-grid{grid-template-columns:1fr} }

@@ -14,10 +14,13 @@
   };
   document.getElementById('scrim').onclick = () => app.classList.remove('open');
 
-  // deeplink: index.html#report → เปิด report.html; รับเฉพาะชื่อที่มีในเมนู (ไม่ใช่ path อิสระ)
+  // deeplink: index.html#report → เปิด report.html; รับเฉพาะชื่อที่มีในเมนูและมีสิทธิ์อ่าน (ไม่ใช่ path อิสระ)
   const frame = document.querySelector('iframe');
+  side.querySelectorAll('a').forEach(a => { if (!ICS_AUTH.can(a.hash.slice(1), 'r')) a.remove(); });
+  side.querySelectorAll('.nav-g').forEach(g => { if (!g.querySelector('a')) g.remove(); });
   const route = () => {
     const links = [...side.querySelectorAll('a')];
+    if (!links.length) { frame.hidden = true; document.getElementById('noaccess').hidden = false; return; }
     const a = links.find(x => x.hash === location.hash) || links[0];
     links.forEach(x => x.toggleAttribute('aria-current', x === a));
     if (a === links[0] && location.hash !== a.hash) history.replaceState(null, '', a.hash);
@@ -30,9 +33,11 @@
   addEventListener('hashchange', route);
   route();
 
-  // ผู้ใช้: หน้านี้ผ่าน ICS_AUTH.guard() แล้ว (js/auth.js) — ponytail: ผู้ใช้คนเดียว ชื่อมาจาก auth.js
-  document.querySelectorAll('[data-name]').forEach(el => el.textContent = ICS_AUTH.USER);
-  document.querySelectorAll('[data-initial]').forEach(el => el.textContent = ICS_AUTH.USER[0]);
+  // ผู้ใช้: หน้านี้ผ่าน ICS_AUTH.guard() แล้ว (js/auth.js)
+  const { user, role } = ICS_AUTH.session();
+  document.querySelectorAll('[data-name]').forEach(el => el.textContent = user.name || user.username);
+  document.querySelectorAll('[data-initial]').forEach(el => el.textContent = (user.name || user.username).trim()[0]);
+  document.querySelectorAll('[data-role]').forEach(el => el.textContent = role.name);
   document.getElementById('userMenu').addEventListener('toggle', e => document.getElementById('user').classList.toggle('on', e.newState === 'open'));
   document.getElementById('logout').onclick = ICS_AUTH.logout;
 

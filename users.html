@@ -1,0 +1,56 @@
+<!doctype html>
+<html lang="th">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>Manage Users</title>
+<script src="js/db.js?v=20261003157"></script>
+<script src="js/auth.js?v=20261003157"></script>
+<script>ICS_AUTH.guard('users')</script>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans+Thai:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500;600&display=swap">
+<link rel="stylesheet" href="css/style.css?v=20261003157">
+<link rel="stylesheet" href="css/report.css?v=20261003157">
+<link rel="stylesheet" href="css/admin.css?v=20261003157">
+</head>
+<body>
+<main class="rp">
+  <header class="rp-head ad-head">
+    <div>
+      <h1>จัดการผู้ใช้</h1>
+      <p class="muted">เพิ่ม แก้ไข หรือลบผู้ใช้ และกำหนด role</p>
+    </div>
+    <div class="rp-actions">
+      <button class="btn btn-ghost" id="btnReset" data-perm="d">รีเซ็ตข้อมูลตั้งต้น</button>
+      <button class="btn btn-primary" id="btnAdd" data-perm="w">+ เพิ่มผู้ใช้</button>
+    </div>
+  </header>
+
+  <section class="rp-card">
+    <div class="tbl-wrap">
+      <table class="tbl">
+        <thead><tr><th>ชื่อผู้ใช้</th><th>ชื่อที่แสดง</th><th>Role</th><th></th></tr></thead>
+        <tbody id="rows"></tbody>
+      </table>
+    </div>
+  </section>
+</main>
+
+<dialog id="dlg" class="ad-dlg">
+  <form id="form" method="dialog">
+    <h2 id="dlgTitle">เพิ่มผู้ใช้</h2>
+    <label>ชื่อผู้ใช้ <small class="muted">a-z 0-9 . _ - (3–32 ตัว)</small>
+      <input name="username" required pattern="[a-z0-9._\-]{3,32}" autocomplete="off" autocapitalize="none"></label>
+    <label>ชื่อที่แสดง<input name="name" required maxlength="60"></label>
+    <label>Role<select name="role" required></select></label>
+    <label>รหัสผ่าน <small class="muted" id="pwdHint">อย่างน้อย 6 ตัว</small>
+      <input name="password" type="password" minlength="6" autocomplete="new-password"></label>
+    <div class="ad-err" id="err" hidden></div>
+    <div class="ad-btns">
+      <button type="button" class="btn btn-ghost" id="btnCancel">ยกเลิก</button>
+      <button class="btn btn-primary" value="save">บันทึก</button>
+    </div>
+  </form>
+</dialog>
+<script src="js/users.js?v=20261003157"></script>
+</body>
+</html>

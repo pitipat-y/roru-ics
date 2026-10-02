@@ -269,7 +269,7 @@ $('#fileSales').addEventListener('change',e=>{ const f=e.target.files[0]; if(f) 
 const drop=$('#drop');
 ['dragenter','dragover'].forEach(ev=>document.addEventListener(ev,e=>{ if(!e.dataTransfer?.types?.includes('Files')) return; e.preventDefault(); drop.classList.add('is-over');}));
 ['dragleave','drop'].forEach(ev=>document.addEventListener(ev,e=>{ e.preventDefault(); drop.classList.remove('is-over');}));
-document.addEventListener('drop',e=>{ if($('#app').hidden || $('#dlg').open) return; const f=e.dataTransfer?.files?.[0]; if(f) openSalesFile(f); });
+document.addEventListener('drop',e=>{ if($('#app').hidden || $('#dlg').open || !ICS_AUTH.can('material','w')) return; const f=e.dataTransfer?.files?.[0]; if(f) openSalesFile(f); });
 
 /* ---------- Clear ---------- */
 const clearBtn=$('#btnClear');
@@ -397,7 +397,7 @@ function renderHistoryList(){
       ${meta}
       <div class="flex gap-2 shrink-0">
         <button data-use="${h.id}" class="btn btn-primary">${ic('arrow')}ใช้ไฟล์นี้</button>
-        <button data-del="${h.id}" class="btn btn-danger">${ic('trash')}ลบ</button>
+        <button data-del="${h.id}" data-perm="d" class="btn btn-danger">${ic('trash')}ลบ</button>
       </div>
     </div>`;
   }).join('');
@@ -556,7 +556,7 @@ function renderMasterHistoryList(){
       <div class="flex flex-wrap justify-end gap-2 shrink-0">
         <button data-dl-master="${h.id}" class="btn btn-good" title="ดาวน์โหลดเป็นไฟล์ Template">${ic('download')}ดาวน์โหลด</button>
         ${active?'':`<button data-use-master="${h.id}" class="btn btn-primary">${ic('check')}ใช้ Master นี้</button>`}
-        ${h.isDefault?'':`<button data-del-master="${h.id}" class="btn btn-danger">${ic('trash')}ลบ</button>`}
+        ${h.isDefault?'':`<button data-del-master="${h.id}" data-perm="d" class="btn btn-danger">${ic('trash')}ลบ</button>`}
       </div>
     </div>`;
   }).join('');

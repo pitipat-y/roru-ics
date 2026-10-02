@@ -1,3 +1,4 @@
+.no-w [data-perm="w"],.no-d [data-perm="d"]{display:none!important} /* สิทธิ์: js/auth.js guard() */
 .embedded #app>header .eyebrow,.embedded #app>header p{display:none} .embedded #app>header{padding-top:16px}
   :root{
     --bg:#F4F6F9; --surface:#FFFFFF; --sunken:#EEF1F5; --ink:#18202F; --muted:#5C6579; --line:#DCE1E9;

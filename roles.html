@@ -1,0 +1,31 @@
+<!doctype html>
+<html lang="th">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>Role Privileges</title>
+<script src="js/db.js?v=20261003157"></script>
+<script src="js/auth.js?v=20261003157"></script>
+<script>ICS_AUTH.guard('roles')</script>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans+Thai:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500;600&display=swap">
+<link rel="stylesheet" href="css/style.css?v=20261003157">
+<link rel="stylesheet" href="css/report.css?v=20261003157">
+<link rel="stylesheet" href="css/admin.css?v=20261003157">
+</head>
+<body>
+<main class="rp">
+  <header class="rp-head ad-head">
+    <div>
+      <h1>สิทธิ์การใช้งาน</h1>
+      <p class="muted">กำหนดว่าแต่ละ role เข้าหน้าไหนได้บ้าง <b>R</b> อ่าน · <b>W</b> เพิ่ม/แก้ไข · <b>D</b> ลบ</p>
+    </div>
+    <form class="rp-actions" id="addForm" data-perm="w">
+      <input name="name" placeholder="ชื่อ role ใหม่" required maxlength="40">
+      <button class="btn btn-primary">+ เพิ่ม role</button>
+    </form>
+  </header>
+  <div class="ad-roles" id="roles"></div>
+</main>
+<script src="js/roles.js?v=20261003157"></script>
+</body>
+</html>

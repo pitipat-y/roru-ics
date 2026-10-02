@@ -6,9 +6,10 @@
 <title>Maison Roru ICS</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans+Thai:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500;600&display=swap">
-<script src="js/auth.js?v=20261003179"></script>
+<script src="js/db.js?v=20261003157"></script>
+<script src="js/auth.js?v=20261003157"></script>
 <script>ICS_AUTH.guard('material')</script>
-<link rel="stylesheet" href="css/style.css?v=20261003179">
+<link rel="stylesheet" href="css/style.css?v=20261003157">
 <script>if(top!==self)document.documentElement.classList.add("embedded")</script>
 <script src="https://cdn.jsdelivr.net/npm/xlsx-js-style@1.2.0/dist/xlsx.bundle.js"></script>
 
@@ -34,7 +35,7 @@
 
   <!-- Upload: empty state -->
   <section id="uploadEmpty" class="mt-5">
-    <label id="drop" for="fileSales" class="drop flex flex-col items-center text-center gap-3 rounded-2xl border-2 border-dashed border-accent bg-surface px-6 py-10 sm:py-12 cursor-pointer transition-colors hover:bg-accent-soft">
+    <label id="drop" data-perm="w" for="fileSales" class="drop flex flex-col items-center text-center gap-3 rounded-2xl border-2 border-dashed border-accent bg-surface px-6 py-10 sm:py-12 cursor-pointer transition-colors hover:bg-accent-soft">
       <span class="flex h-14 w-14 items-center justify-center rounded-full bg-accent-soft text-accent" aria-hidden="true">
         <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 16V4"/><path d="m6 10 6-6 6 6"/><path d="M4 16v3a1 1 0 0 0 1 1h14a1 1 0 0 0 1-1v-3"/></svg>
       </span>
@@ -67,7 +68,7 @@
       <div><div class="text-muted text-xs">ไม่มีในสูตร</div><div id="stUnmatched" class="num text-lg font-semibold text-warn"></div></div>
     </div>
     <div class="flex flex-wrap gap-2">
-      <label for="fileSales" class="btn btn-primary" data-icon="upload"><span class="lbl">อัปโหลดไฟล์ใหม่</span></label>
+      <label for="fileSales" data-perm="w" class="btn btn-primary" data-icon="upload"><span class="lbl">อัปโหลดไฟล์ใหม่</span></label>
       <button id="btnRepreview" class="btn btn-neutral" data-icon="columns"><span class="lbl">ตรวจคอลัมน์อีกครั้ง</span></button>
       <button id="btnClear" class="btn btn-danger" data-icon="trash"><span class="lbl">ล้างข้อมูล</span></button>
     </div>
@@ -122,9 +123,9 @@
       </div>
       <div class="flex flex-wrap gap-2">
         <button id="btnMasterHistory" class="btn btn-info" data-icon="history"><span class="lbl">ประวัติ Master</span></button>
-        <label for="fileMaster" class="btn btn-primary" data-icon="upload"><span class="lbl">อัปโหลด Master ใหม่</span></label>
+        <label for="fileMaster" data-perm="w" class="btn btn-primary" data-icon="upload"><span class="lbl">อัปโหลด Master ใหม่</span></label>
         <input id="fileMaster" type="file" accept=".xlsx,.xlsm,.xls" class="sr-only">
-        <button id="btnResetMaster" class="btn btn-neutral" data-icon="reset"><span class="lbl">ใช้ค่าเริ่มต้น</span></button>
+        <button id="btnResetMaster" data-perm="w" class="btn btn-neutral" data-icon="reset"><span class="lbl">ใช้ค่าเริ่มต้น</span></button>
       </div>
     </div>
     <input id="masterSearch" type="search" placeholder="ค้นหาวัตถุดิบ / เมนู" class="px-3 py-2 mb-3 rounded-lg border border-line bg-surface w-full sm:w-72">
@@ -194,12 +195,12 @@
       <button id="dlgHistoryClose" class="btn btn-ghost btn-icon" data-icon="x" aria-label="ปิด"></button>
     </div>
     <div class="px-5 py-3 flex flex-wrap items-center justify-between gap-2 border-b border-line">
-      <button id="btnHistoryMulti" class="btn btn-info" data-icon="checks"><span class="lbl">เลือกหลายไฟล์</span></button>
+      <button id="btnHistoryMulti" data-perm="w" class="btn btn-info" data-icon="checks"><span class="lbl">เลือกหลายไฟล์</span></button>
       <button id="btnHistoryMerge" class="btn btn-primary" data-icon="layers" disabled hidden><span class="lbl">รวมและคำนวณ</span></button>
     </div>
     <div class="px-5 py-4 overflow-y-auto flex flex-col gap-2" id="historyList"></div>
     <div class="px-5 py-3 border-t border-line flex flex-wrap justify-between gap-2">
-      <button id="btnHistoryClear" class="btn btn-danger" data-icon="trash"><span class="lbl">ล้างประวัติทั้งหมด</span></button>
+      <button id="btnHistoryClear" data-perm="d" class="btn btn-danger" data-icon="trash"><span class="lbl">ล้างประวัติทั้งหมด</span></button>
       <button id="dlgHistoryCancel" class="btn btn-neutral" data-icon="x"><span class="lbl">ปิด</span></button>
     </div>
   </div>
@@ -219,7 +220,7 @@
     </div>
     <div class="px-5 py-4 overflow-y-auto flex flex-col gap-2" id="masterHistoryList"></div>
     <div class="px-5 py-3 border-t border-line flex flex-wrap justify-between gap-2">
-      <button id="btnMasterHistoryClear" class="btn btn-danger" data-icon="trash"><span class="lbl">ล้างประวัติ Master ทั้งหมด</span></button>
+      <button id="btnMasterHistoryClear" data-perm="d" class="btn btn-danger" data-icon="trash"><span class="lbl">ล้างประวัติ Master ทั้งหมด</span></button>
       <button id="dlgMasterHistoryCancel" class="btn btn-neutral" data-icon="x"><span class="lbl">ปิด</span></button>
     </div>
   </div>
@@ -259,15 +260,15 @@
     <div class="px-5 py-3 border-t border-line flex flex-wrap justify-end gap-2">
       <button id="dlgQuotaSkip" class="btn btn-neutral" data-icon="skip"><span class="lbl">ข้าม ไม่บันทึกครั้งนี้</span></button>
       <button id="dlgQuotaOpenHistory" class="btn btn-info" data-icon="history"><span class="lbl">เปิดประวัติเพื่อลบเอง</span></button>
-      <button id="dlgQuotaClearSave" class="btn btn-primary" data-icon="trash"><span class="lbl">ล้างประวัติเก่าทั้งหมดแล้วบันทึก</span></button>
+      <button id="dlgQuotaClearSave" data-perm="d" class="btn btn-primary" data-icon="trash"><span class="lbl">ล้างประวัติเก่าทั้งหมดแล้วบันทึก</span></button>
     </div>
   </div>
 </dialog>
 
 <div id="toast" class="fixed left-1/2 -translate-x-1/2 bottom-6 px-4 py-2 rounded-lg bg-ink text-bg text-sm shadow-lg" hidden></div>
 
-<script src="js/data.js?v=20261003179"></script>
-<script src="js/app.js?v=20261003179"></script>
+<script src="js/data.js?v=20261003157"></script>
+<script src="js/app.js?v=20261003157"></script>
 
 </body>
 </html>

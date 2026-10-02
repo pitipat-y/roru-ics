@@ -4,11 +4,12 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
 <title>Maison Roru CMS</title>
-<script src="js/auth.js?v=20261003179"></script>
+<script src="js/db.js?v=20261003157"></script>
+<script src="js/auth.js?v=20261003157"></script>
 <script>ICS_AUTH.guard()</script>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans+Thai:wght@400;500;600;700&display=swap">
-<link rel="stylesheet" href="css/style.css?v=20261003179">
-<link rel="stylesheet" href="css/cms.css?v=20261003179">
+<link rel="stylesheet" href="css/style.css?v=20261003157">
+<link rel="stylesheet" href="css/cms.css?v=20261003157">
 </head>
 <body>
 <div class="app" id="app">
@@ -19,7 +20,7 @@
     <div><div class="eyebrow">Maison Roru</div><div class="font-semibold" id="pageTitle">คำนวณวัตถุดิบ</div></div>
     <button class="user" id="user" popovertarget="userMenu" aria-label="บัญชีผู้ใช้" aria-haspopup="menu">
       <span class="avatar" data-initial></span>
-      <span class="meta"><span class="text-sm font-semibold" data-name></span><small>ผู้ใช้งาน</small></span>
+      <span class="meta"><span class="text-sm font-semibold" data-name></span><small data-role></small></span>
       <svg class="chev" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="m6 9 6 6 6-6"/></svg>
     </button>
     <div id="userMenu" popover role="menu">
@@ -32,15 +33,38 @@
   </header>
   <div class="body">
     <nav class="side" id="side">
-      <a href="#material">คำนวณวัตถุดิบ</a>
-      <a href="#report">รายงานการขาย</a>
+      <div class="nav-g"><div class="nav-h">ครัว</div>
+        <a href="#material">คำนวณวัตถุดิบ</a>
+        <a href="#report">รายงานการขาย</a>
+      </div>
+      <div class="nav-g"><div class="nav-h">หน้าร้าน</div>
+        <a href="#pos-tables">รับลูกค้า</a>
+        <a href="#pos-order">สั่งออเดอร์</a>
+        <a href="#pos-bill">เช็คบิล</a>
+        <a href="#pos-report">รายงานยอดขาย</a>
+        <a href="#pos-coupons">คูปองส่วนลด</a>
+        <a href="#pos-menu">เมนูและราคา</a>
+      </div>
+      <div class="nav-g"><div class="nav-h">คลังสินค้า</div>
+        <a href="#tracker">ค้นหาวัตถุดิบ</a>
+        <a href="#stock">สต๊อกคงเหลือ / ตรวจนับ</a>
+        <a href="#pr">ใบขอซื้อ (PR)</a>
+        <a href="#po">ใบสั่งซื้อ (PO)</a>
+        <a href="#stock-in">รับเข้า</a>
+        <a href="#stock-out">เบิกออก</a>
+      </div>
+      <div class="nav-g"><div class="nav-h">ตั้งค่า</div>
+        <a href="#users">จัดการผู้ใช้</a>
+        <a href="#roles">สิทธิ์การใช้งาน</a>
+      </div>
       <!-- เพิ่มเมนูอื่น: <a href="#xxx">ชื่อเมนู</a> → เปิด xxx.html, deeplink: index.html#xxx -->
       <div class="grip" id="grip" title="ลากเพื่อปรับความกว้าง"></div>
     </nav>
     <div class="scrim" id="scrim"></div>
     <iframe name="main" title="เนื้อหา"></iframe>
+    <div class="noaccess" id="noaccess" hidden>บัญชีนี้ยังไม่มีสิทธิ์เข้าหน้าใด ติดต่อผู้ดูแลระบบ</div>
   </div>
 </div>
-<script src="js/cms.js?v=20261003179"></script>
+<script src="js/cms.js?v=20261003157"></script>
 </body>
 </html>
