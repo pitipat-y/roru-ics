@@ -1201,7 +1201,10 @@ async function sha256(t){
 }
 const DEFAULT_USER='ics';
 function unlock(){ $('#gate').hidden=true; $('#app').hidden=false; renderAll(); }
-function lock(){ try{sessionStorage.removeItem('ics-auth');}catch(_){} sales=[]; source=null; P.wb=null; $('#app').hidden=true; $('#gate').hidden=false; $('#gateUser').value=DEFAULT_USER; $('#gatePwd').value=''; $('#gatePwd').focus(); }
+const AUTH_COOKIE='ics-auth', AUTH_MAX_AGE=30*24*3600; // 1 month
+function getAuth(){ const m=document.cookie.match(/(?:^|; )ics-auth=([^;]*)/); return m?decodeURIComponent(m[1]):null; }
+function setAuth(v){ document.cookie=`${AUTH_COOKIE}=${encodeURIComponent(v)}; max-age=${v?AUTH_MAX_AGE:0}; path=/; SameSite=Strict`; }
+function lock(){ setAuth(''); sales=[]; source=null; P.wb=null; $('#app').hidden=true; $('#gate').hidden=false; $('#gateUser').value=DEFAULT_USER; $('#gatePwd').value=''; $('#gatePwd').focus(); }
 $('#gateForm').addEventListener('submit',async e=>{
   e.preventDefault();
   const u=$('#gateUser').value.trim();
@@ -1209,11 +1212,11 @@ $('#gateForm').addEventListener('submit',async e=>{
   const fallback = b64dec(front)+b64dec(rear);
   const pwOk = (h ? h===PWD_HASH : false) || v===fallback;
   const ok = u===DEFAULT_USER && pwOk;
-  if(ok){ $('#gateErr').hidden=true; try{sessionStorage.setItem('ics-auth',h||fallback);}catch(_){} unlock(); }
+  if(ok){ $('#gateErr').hidden=true; setAuth(h||fallback); unlock(); }
   else { $('#gateErr').hidden=false; $('#gatePwd').select(); }
 });
 $('#btnLogout').addEventListener('click',lock);
-let authed=false; try{ const st=sessionStorage.getItem('ics-auth'); authed = st===PWD_HASH || (st && st===b64dec(front)+b64dec(rear)); }catch(_){}
+let authed=false; try{ const st=getAuth(); authed = st===PWD_HASH || (st && st===b64dec(front)+b64dec(rear)); }catch(_){}
 if(authed) unlock(); else $('#gatePwd').focus();
 })();
 </script>
