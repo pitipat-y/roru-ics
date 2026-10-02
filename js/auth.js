@@ -9,7 +9,21 @@ const ICS_AUTH = (() => {
     const b = await crypto.subtle.digest('SHA-256', new TextEncoder().encode(t));
     return [...new Uint8Array(b)].map(x => x.toString(16).padStart(2, '0')).join('');
   };
-  const go = url => { document.documentElement.style.display = 'none'; top.location.replace(url); };
+  // กันเด้งวน: เด้งเกิน 3 ครั้งใน 5 วินาที (นับต่อแท็บ) → หยุด แล้วบอกสาเหตุบนหน้าแทนการ reload ไม่รู้จบ
+  // (เช่น Firefox เปิดแบบ file:// แต่ละไฟล์เห็น cookie/localStorage ไม่ตรงกัน)
+  const go = (url, why = '') => {
+    let hops = [];
+    try { hops = JSON.parse(sessionStorage.getItem('ics-hops') || '[]').filter(t => Date.now() - t < 5000); hops.push(Date.now()); sessionStorage.setItem('ics-hops', JSON.stringify(hops)); } catch (_) {}
+    if (hops.length <= 3) { document.documentElement.style.display = 'none'; return top.location.replace(url); }
+    try { sessionStorage.removeItem('ics-hops'); } catch (_) {}
+    let stored = false; try { stored = !!localStorage.getItem('ics-db'); } catch (_) {}
+    const info = [`${location.pathname.split('/').pop()} → ${url}`, why, `cookie: ${read() ? 'มี' : 'ไม่มี'}`, `ข้อมูลผู้ใช้: ${stored ? 'localStorage' : 'ค่าตั้งต้น'}`, `เปิดแบบ: ${location.protocol}`];
+    addEventListener('DOMContentLoaded', () => {
+      document.body.innerHTML = `<div style="max-width:560px;margin:48px auto;padding:20px;border:1px solid var(--line);border-radius:12px;font:15px/1.6 system-ui">
+        <b>หยุดการเด้งหน้าวน</b><br>${info.map(s => String(s).replace(/</g, '&lt;')).join('<br>')}<br><br>
+        ${location.protocol === 'file:' ? 'เปิดไฟล์ตรงจากเครื่อง: ให้เปิดผ่าน server แทน เช่น <code>python3 -m http.server</code> แล้วเข้า http://localhost:8000' : 'ลองออกจากระบบแล้วเข้าใหม่ หรือล้าง cookie ของเว็บนี้'}</div>`;
+    });
+  };
 
   // cookie = "username:hash" → ตรวจกับ DB ทุกครั้ง: เปลี่ยนรหัส/ลบ user แล้ว session เดิมใช้ไม่ได้ทันที
   const session = () => {
@@ -35,10 +49,10 @@ const ICS_AUTH = (() => {
     // ไม่มีสิทธิ์ w/d → ใส่ class no-w/no-d ที่ <html> ให้ CSS ซ่อน [data-perm="w"|"d"]
     // ใช้ #page (ชื่อเมนู) แทน URL เต็ม เลยไม่มี open redirect
     guard(page) {
-      if (!session()) return go('login.html' + (page ? '#' + page : location.hash));
+      if (!session()) return go('login.html' + (page ? '#' + page : location.hash), 'ไม่พบ session (cookie ไม่ตรงกับข้อมูลผู้ใช้)');
       if (!page) return;
-      if (!can(page, 'r')) return go('index.html');
-      if (top === self) return go('index.html#' + page);
+      if (!can(page, 'r')) return go('index.html', `ไม่มีสิทธิ์อ่านหน้า ${page}`);
+      if (top === self) return go('index.html#' + page, 'เปิดหน้าตรง ไม่ได้อยู่ใน CMS');
       if (!can(page, 'w')) document.documentElement.classList.add('no-w');
       if (!can(page, 'd')) document.documentElement.classList.add('no-d');
     },
