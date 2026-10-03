@@ -8,14 +8,15 @@ let editing = null; // username ที่กำลังแก้, null = เพ
 function render() {
   const db = DB.load();
   const roleCell = id => { const r = db.roles.find(x => x.id === id);
-    return r ? `<span class="badge${r.id === DB.ADMIN ? ' badge-accent' : ''}">${esc(r.name)}</span>` : `<span class="ad-warn">ไม่พบ role "${esc(id)}"</span>`; };
+    const n = r && (r.id === DB.ADMIN ? DB.PAGES.length : Object.keys(r.perms).filter(p => DB.PAGES.some(x => x.id === p)).length);
+    return r ? `<span class="badge${r.id === DB.ADMIN ? ' badge-accent' : ''}">${esc(r.name)}</span> <small class="muted">เข้าได้ ${n} หน้า</small>` : `<span class="ad-warn">ไม่พบ role "${esc(id)}"</span>`; };
   $('#rows').innerHTML = db.users.map(u => `<tr>
     <td class="mono">${esc(u.username)}${u.username === me ? ' <span class="badge">คุณ</span>' : ''}</td>
     <td>${esc(u.name)}</td>
     <td>${roleCell(u.role)}</td>
     <td class="ad-act">
-      <button class="btn btn-ghost" data-edit="${esc(u.username)}" data-perm="w">แก้ไข</button>
-      <button class="btn btn-ghost ad-del" data-del="${esc(u.username)}" data-perm="d"${u.username === me ? ' disabled title="ลบบัญชีตัวเองไม่ได้"' : ''}>ลบ</button>
+      <button class="btn btn-ghost btn-sm" data-edit="${esc(u.username)}" data-perm="w">${UI.icon('edit')} แก้ไข</button>
+      <button class="btn btn-ghost btn-sm ad-del" data-del="${esc(u.username)}" data-perm="d" aria-label="ลบ ${esc(u.username)}"${u.username === me ? ' disabled title="ลบบัญชีตัวเองไม่ได้"' : ' title="ลบ"'}>${UI.icon('trash')}</button>
     </td></tr>`).join('');
 }
 
@@ -49,7 +50,7 @@ form.addEventListener('submit', async e => {
   }
   DB.save(db);
   if (editing === me && hash) await ICS_AUTH.login(me, pwd); // เปลี่ยนรหัสตัวเอง → ต่อ session ให้
-  dlg.close(); render();
+  dlg.close(); render(); UI.toast(editing ? `บันทึก ${editing} แล้ว` : `เพิ่มผู้ใช้ ${username} แล้ว`);
 });
 
 $('#btnAdd').onclick = () => open(null);
@@ -58,7 +59,7 @@ $('#rows').addEventListener('click', e => {
   const ed = e.target.closest('[data-edit]'), del = e.target.closest('[data-del]');
   if (ed) open(ed.dataset.edit);
   if (del && !del.disabled && confirm(`ลบผู้ใช้ "${del.dataset.del}" ?`)) {
-    const db = DB.load(); db.users = db.users.filter(u => u.username !== del.dataset.del); DB.save(db); render();
+    const db = DB.load(); db.users = db.users.filter(u => u.username !== del.dataset.del); DB.save(db); render(); UI.toast(`ลบ ${del.dataset.del} แล้ว`);
   }
 });
 $('#btnReset').onclick = () => {

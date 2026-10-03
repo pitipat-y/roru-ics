@@ -4,15 +4,15 @@
 (() => {
 const $ = s => document.querySelector(s), $$ = s => [...document.querySelectorAll(s)];
 const esc = s => String(s ?? '').replace(/[&<>"]/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
-const norm = s => String(s ?? '').normalize('NFD').replace(/[̀-ͯ]/g,'').trim().replace(/\s+/g,' ').toLowerCase();
+const norm = s => String(s ?? '').normalize('NFD').replace(/[\u0300-\u036f]/g, '').trim().replace(/\s+/g, ' ').toLowerCase();
 const money = n => (+n || 0).toLocaleString('th-TH', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
 const fmt = n => (+n || 0).toLocaleString('th-TH', { maximumFractionDigits: 2 });
 const today = () => new Date().toLocaleDateString('sv-SE');
 const dkey = ts => new Date(ts).toLocaleDateString('sv-SE');
 const ftime = ts => new Date(ts).toLocaleTimeString('th-TH', { hour: '2-digit', minute: '2-digit' });
 const fdt = ts => new Date(ts).toLocaleString('th-TH', { dateStyle: 'medium', timeStyle: 'short' });
-const head = (title, desc, actions = '') => `<header class="rp-head ad-head"><div><h1>${title}</h1><p class="muted">${desc}</p></div>${actions}</header>`;
-const toast = m => { const t = document.createElement('div'); t.className = 'pos-toast'; t.textContent = m; document.body.append(t); setTimeout(() => t.remove(), 2200); };
+const toast = UI.toast, ic = UI.icon;
+const dur = m => m < 60 ? `${m} นาที` : `${Math.floor(m / 60)} ชม. ${m % 60} นาที`;
 
 // ponytail: ค่าคงที่ของร้าน — ย้ายไปหน้าตั้งค่าเมื่อต้องเปลี่ยนบ่อย
 const SERVICE = 0.10, VAT = 0.07;
@@ -47,7 +47,7 @@ const setCur = id => { try { id ? localStorage.setItem('pos-current', id) : loca
 const root = $('#pos'), PAGE = root.dataset.type;
 const me = ICS_AUTH.session().user.username;
 const can = (p, page = PAGE) => ICS_AUTH.can(page, p);
-const go = page => { top.location.hash = page; }; // เปลี่ยนเมนูใน CMS
+const go = UI.go; // เปลี่ยนเมนูใน CMS
 
 // คูปอง: คืน { ok, msg, discount }
 function checkCoupon(d, code, subtotal) {
@@ -90,7 +90,8 @@ function receipt(b) {
 
 /* ---------- รับลูกค้า ---------- */
 function tablesPage() {
-  root.innerHTML = head('รับลูกค้า', 'แตะโต๊ะว่างเพื่อเปิดบิล · โต๊ะที่มีลูกค้าแตะเพื่อสั่งอาหารหรือเช็คบิล') + `
+  root.innerHTML = UI.head(PAGE) + `
+  <div class="pos-summary" id="summary"></div>
   <div class="pos-tables" id="grid"></div>
   <dialog id="dlg" class="ad-dlg"><form id="form">
     <h2 id="dlgTitle"></h2>
@@ -101,21 +102,27 @@ function tablesPage() {
   let table = '';
   function render() {
     const d = load(), open = openBills(d), now = Date.now();
-    const card = b => { const t = totals(d, b), mins = Math.round((now - b.openedAt) / 60000);
-      return `<div class="pos-tbl busy" data-bill="${b.id}"><b>${b.table === TAKEAWAY ? TAKEAWAY : b.table}</b>
-        <small>${b.id} · ${b.pax} ท่าน${b.customer ? ' · ' + esc(b.customer) : ''}</small>
-        <span class="mono">${money(t.total)}</span><small class="muted">${b.items.length} รายการ · ${mins} นาที</small>
-        <div class="pos-tbl-act">${can('r', 'pos-order') ? `<button class="btn btn-ghost" data-go="pos-order">สั่งอาหาร</button>` : ''}${can('r', 'pos-bill') ? `<button class="btn btn-ghost" data-go="pos-bill">เช็คบิล</button>` : ''}</div></div>`; };
+    // แตะการ์ดโต๊ะที่มีลูกค้า = ไปสั่งอาหาร (หรือเช็คบิล ถ้าไม่มีสิทธิ์สั่ง)
+    const target = can('r', 'pos-order') ? 'pos-order' : can('r', 'pos-bill') ? 'pos-bill' : '';
+    const card = b => { const t = totals(d, b), mins = Math.round((now - b.openedAt) / 60000), unsent = b.items.some(i => !i.sentAt);
+      return `<div class="pos-tbl busy${target ? ' tap' : ''}" data-bill="${b.id}" data-target="${target}"><b>${b.table === TAKEAWAY ? TAKEAWAY : b.table}</b>
+        <small>${b.pax} ท่าน${b.customer ? ' · ' + esc(b.customer) : ''}</small>
+        <span class="mono">${money(t.total)}</span>
+        <small class="${mins >= 90 ? 'pos-late' : 'muted'}">${ic('history')} ${dur(mins)} · ${b.items.length ? `${b.items.length} รายการ${unsent ? ' · ยังไม่ส่งครัว' : ''}` : 'ยังไม่สั่ง'}</small>
+        <div class="pos-tbl-act">${can('r', 'pos-order') ? `<button class="btn btn-neutral btn-sm" data-go="pos-order">${ic('order')} สั่งอาหาร</button>` : ''}${can('r', 'pos-bill') ? `<button class="btn btn-neutral btn-sm" data-go="pos-bill">${ic('receipt')} เช็คบิล</button>` : ''}</div></div>`; };
+    const busy = TABLES.filter(t => open.some(x => x.table === t)).length;
+    $('#summary').innerHTML = `<span>ว่าง <b>${TABLES.length - busy}</b> / ${TABLES.length} โต๊ะ</span><span>บิลที่เปิด <b>${open.length}</b> · ${open.reduce((s, b) => s + b.pax, 0)} ท่าน</span>
+      <span>ยอดรอชำระ <b class="mono">${money(open.reduce((s, b) => s + totals(d, b).total, 0))}</b></span>`;
     $('#grid').innerHTML = TABLES.map(t => { const b = open.find(x => x.table === t);
-      return b ? card(b) : `<button class="pos-tbl free" data-open="${t}" data-perm="w"><b>${t}</b><small>ว่าง</small></button>`; }).join('')
+      return b ? card(b) : `<button class="pos-tbl free" data-open="${t}" data-perm="w"><b>${t}</b><small>ว่าง · แตะเพื่อเปิดบิล</small></button>`; }).join('')
       + open.filter(b => b.table === TAKEAWAY).map(card).join('')
-      + `<button class="pos-tbl free" data-open="${TAKEAWAY}" data-perm="w"><b>+ ${TAKEAWAY}</b><small>เปิดบิลใหม่</small></button>`;
+      + `<button class="pos-tbl free" data-open="${TAKEAWAY}" data-perm="w"><b>${ic('plus')} ${TAKEAWAY}</b><small>เปิดบิลใหม่</small></button>`;
   }
   root.addEventListener('click', e => {
     if (e.target.closest('[data-close]')) return $('#dlg').close();
     const o = e.target.closest('[data-open]'), card = e.target.closest('[data-bill]');
     if (o) { table = o.dataset.open; $('#form').reset(); $('#dlgTitle').textContent = `เปิดบิล ${table === TAKEAWAY ? TAKEAWAY : 'โต๊ะ ' + table}`; $('#dlg').showModal(); }
-    else if (card) setCur(card.dataset.bill); // ปุ่ม data-go ไปหน้าต่อ (handler ท้ายไฟล์)
+    else if (card) { setCur(card.dataset.bill); if (!e.target.closest('[data-go]') && card.dataset.target) go(card.dataset.target); } // ปุ่ม data-go → UI.go
   });
   $('#form').addEventListener('submit', e => {
     e.preventDefault();
@@ -146,7 +153,7 @@ const noBill = () => `<div class="rp-empty">ยังไม่มีบิลท
 
 /* ---------- สั่งออเดอร์ ---------- */
 function orderPage() {
-  root.innerHTML = head('สั่งออเดอร์', 'แตะเมนูเพื่อเพิ่มลงบิล แล้วกด "ส่งครัว"', `<select id="billSel" class="pos-billsel"></select>`) + `
+  root.innerHTML = UI.head(PAGE, `<select id="billSel" class="pos-billsel" aria-label="เลือกบิล"></select>`) + `
   <div class="pos-order">
     <section class="pos-menu">
       <input id="q" type="search" class="inv-search" placeholder="ค้นหาเมนู">
@@ -154,34 +161,40 @@ function orderPage() {
       <div class="pos-grid" id="menu"></div>
     </section>
     <aside class="rp-card pos-cart" id="cart"></aside>
-  </div>`;
+  </div>
+  <button class="pos-cartbar" id="cartBar" hidden></button>`;
   let cat = '', billId = '';
-  const fill = billPicker(id => { billId = id; renderCart(); });
+  const fill = billPicker(id => { billId = id; renderCart(); renderMenu(); });
   function renderMenu() {
     const d = load(), q = norm($('#q').value), menu = d.menu.filter(m => m.active);
-    const cats = [...new Set(menu.map(m => m.cat))];
+    const cats = [...new Set(menu.map(m => m.cat))], inBill = new Map(); // จำนวนที่อยู่ในบิลแล้ว → ป้ายบนปุ่มเมนู
+    d.bills.find(x => x.id === billId && x.status === 'open')?.items.forEach(i => inBill.set(i.menu, (inBill.get(i.menu) || 0) + i.qty));
     $('#cats').innerHTML = ['', ...cats].map(c => `<button class="inv-chip${c === cat ? ' on' : ''}" data-cat="${esc(c)}">${c ? esc(c) : 'ทั้งหมด'}</button>`).join('');
     $('#menu').innerHTML = menu.filter(m => (!cat || m.cat === cat) && (!q || norm(m.name).includes(q)))
-      .map(m => `<button class="pos-item" data-add="${m.id}" data-perm="w"><span>${esc(m.name)}</span><b class="mono">${money(m.price)}</b></button>`).join('') || '<div class="inv-empty">ไม่พบเมนู</div>';
+      .map(m => `<button class="pos-item${inBill.get(m.name) ? ' in' : ''}" data-add="${m.id}" data-perm="w"><span>${esc(m.name)}</span><b class="mono">${money(m.price)}</b>${inBill.get(m.name) ? `<em class="pos-badge">${fmt(inBill.get(m.name))}</em>` : ''}</button>`).join('') || '<div class="inv-empty">ไม่พบเมนู</div>';
   }
   function renderCart() {
     const d = load(), b = d.bills.find(x => x.id === billId && x.status === 'open');
-    if (!b) { $('#cart').innerHTML = noBill(); return; }
-    const t = totals(d, b), unsent = b.items.filter(i => !i.sentAt).length;
+    if (!b) { $('#cart').innerHTML = noBill(); $('#cartBar').hidden = true; return; }
+    const t = totals(d, b), unsent = b.items.filter(i => !i.sentAt).length, n = b.items.reduce((s, i) => s + i.qty, 0);
+    $('#cartBar').hidden = !n;
+    $('#cartBar').innerHTML = `${ic('order')} ดูบิล ${b.table === TAKEAWAY ? TAKEAWAY : b.table} · ${fmt(n)} รายการ${unsent ? ` · ยังไม่ส่ง ${unsent}` : ''}<b class="mono">${money(t.subtotal)}</b>`;
     $('#cart').innerHTML = `<div class="rp-card-head"><h2>${b.table === TAKEAWAY ? TAKEAWAY : 'โต๊ะ ' + b.table} <small class="muted">${b.pax} ท่าน</small></h2><small class="muted mono">${b.id}</small></div>
       <div class="pos-lines">${b.items.map((i, k) => `<div class="pos-line${i.sentAt ? ' sent' : ''}">
         <div><span>${esc(i.menu)}</span><small class="muted">${money(i.price)}${i.sentAt ? ` · ส่งครัว ${ftime(i.sentAt)}` : ' · ยังไม่ส่ง'}</small></div>
-        ${i.sentAt ? `<b class="mono">×${fmt(i.qty)}</b><button class="btn btn-ghost ad-del" data-void="${k}" data-perm="d" title="ยกเลิกรายการที่ส่งครัวแล้ว">✕</button>`
+        ${i.sentAt ? `<b class="mono">×${fmt(i.qty)}</b><button class="btn btn-ghost btn-sm ad-del" data-void="${k}" data-perm="d" title="ยกเลิกรายการที่ส่งครัวแล้ว" aria-label="ยกเลิก ${esc(i.menu)}">${ic('x')}</button>`
           : `<div class="pos-qty" data-perm="w"><button data-dec="${k}">−</button><b class="mono">${fmt(i.qty)}</b><button data-inc="${k}">+</button></div>`}
       </div>`).join('') || '<div class="inv-empty">ยังไม่มีรายการ</div>'}</div>
       <div class="pos-sum"><span>รวม (ก่อน service/VAT)</span><b class="mono">${money(t.subtotal)}</b></div>
       <div class="ad-btns">
-        <button class="btn btn-primary" id="btnSend" data-perm="w"${unsent ? '' : ' disabled'}>ส่งครัว${unsent ? ` (${unsent})` : ''}</button>
-        ${can('r', 'pos-bill') ? '<button class="btn btn-ghost" data-go="pos-bill">ไปเช็คบิล →</button>' : ''}
+        ${can('r', 'pos-bill') ? `<button class="btn btn-ghost" data-go="pos-bill">${ic('receipt')} ไปเช็คบิล</button>` : ''}
+        <button class="btn btn-primary" id="btnSend" data-perm="w"${unsent ? '' : ' disabled'}>${ic('send')} ส่งครัว${unsent ? ` (${unsent})` : ''}</button>
       </div>`;
   }
-  const mutate = fn => { const d = load(), b = d.bills.find(x => x.id === billId && x.status === 'open'); if (!b) return; fn(b, d); save(d); renderCart(); };
+  const mutate = fn => { const d = load(), b = d.bills.find(x => x.id === billId && x.status === 'open');
+    if (!b) return toast('ยังไม่มีบิล — เปิดบิลที่หน้ารับลูกค้าก่อน'); fn(b, d); save(d); renderCart(); renderMenu(); };
   root.addEventListener('click', e => {
+    if (e.target.closest('#cartBar')) return $('#cart').scrollIntoView({ behavior: 'smooth', block: 'start' });
     const t = e.target.closest('[data-cat],[data-add],[data-inc],[data-dec],[data-void],#btnSend'); if (!t) return;
     if (t.dataset.cat !== undefined) { cat = t.dataset.cat; return renderMenu(); }
     if (t.dataset.add) mutate((b, d) => {
@@ -194,15 +207,16 @@ function orderPage() {
     if (t.id === 'btnSend') { mutate(b => { const now = Date.now(); b.items.forEach(i => { if (!i.sentAt) i.sentAt = now; }); }); toast('ส่งครัวแล้ว'); }
   });
   $('#q').addEventListener('input', renderMenu);
+  $('#q').placeholder = 'ค้นหาเมนู';
   billId = fill(); renderMenu(); renderCart();
 }
 
 /* ---------- เช็คบิล ---------- */
 function billPage() {
-  root.innerHTML = head('เช็คบิล', 'ใส่คูปอง เลือกวิธีชำระ แล้วปิดบิล', `<select id="billSel" class="pos-billsel"></select>`) + `
+  root.innerHTML = UI.head(PAGE, `<select id="billSel" class="pos-billsel" aria-label="เลือกบิล"></select>`) + `
   <div id="body"></div>
-  <dialog id="rcDlg" class="ad-dlg"><div id="rcBody"></div>
-    <div class="ad-btns pos-noprint"><button class="btn btn-ghost" onclick="print()">พิมพ์ใบเสร็จ</button><button class="btn btn-primary" data-close>เสร็จสิ้น</button></div></dialog>`;
+  <dialog id="rcDlg" class="ad-dlg"><div id="rcDone" class="pos-done pos-noprint"></div><div id="rcBody"></div>
+    <div class="ad-btns pos-noprint"><button class="btn btn-ghost" onclick="print()">${ic('print')} พิมพ์ใบเสร็จ</button><button class="btn btn-primary" data-close>${ic('check')} เสร็จสิ้น</button></div></dialog>`;
   let billId = '';
   const fill = billPicker(id => { billId = id; render(); });
   function render() {
@@ -228,11 +242,14 @@ function billPage() {
           <dt class="pos-grand">ยอดสุทธิ</dt><dd class="pos-grand">${money(t.total)}</dd>
         </dl>
         <div class="pos-methods">${Object.entries(PAY).map(([k, v], i) => `<label><input type="radio" name="pm" value="${k}"${i ? '' : ' checked'}> ${v}</label>`).join('')}</div>
-        <label id="cashBox">รับเงิน<input id="received" type="number" min="0" step="any" placeholder="${money(t.total)}"><small class="muted" id="change"></small></label>
+        <label id="cashBox">รับเงิน <small class="muted">(เว้นว่าง = รับพอดี)</small><input id="received" type="number" min="0" step="any" placeholder="${money(t.total)}">
+          <div class="pos-quick">${[t.total, ...new Set([100, 500, 1000].map(u => Math.ceil(t.total / u) * u))].filter((v, i) => !i || v > t.total)
+            .map((v, i) => `<button type="button" class="btn btn-neutral btn-sm" data-cash="${v}">${i ? fmt(v) : 'พอดี'}</button>`).join('')}</div>
+          <small class="muted" id="change"></small></label>
         <div class="ad-err" id="err" hidden></div>
         <div class="ad-btns">
-          <button class="btn btn-ghost ad-del" id="btnVoid" data-perm="d">ยกเลิกบิล</button>
-          <button class="btn btn-primary btn-lg" id="btnPay" data-perm="w"${b.items.length ? '' : ' disabled'}>ชำระเงิน ${money(t.total)}</button>
+          <button class="btn btn-ghost ad-del" id="btnVoid" data-perm="d">${ic('trash')} ยกเลิกบิล</button>
+          <button class="btn btn-primary btn-lg" id="btnPay" data-perm="w"${b.items.length ? '' : ' disabled'}>${ic('check')} ชำระเงิน ${money(t.total)}</button>
         </div>
       </section></div>`;
     const syncPay = () => {
@@ -240,10 +257,12 @@ function billPage() {
       const r = +$('#received').value; $('#change').textContent = cash && r ? (r >= t.total ? `เงินทอน ${money(r - t.total)}` : `ขาดอีก ${money(t.total - r)}`) : '';
     };
     $('.pos-methods').onchange = syncPay; $('#received').oninput = syncPay; syncPay();
+    $('.pos-quick').onclick = e => { const c = e.target.closest('[data-cash]'); if (c) { $('#received').value = c.dataset.cash; syncPay(); } };
+    $('#coupon').onkeydown = e => { if (e.key === 'Enter') { e.preventDefault(); $('#cpApply')?.click(); } };
   }
   const mutate = fn => { const d = load(), b = d.bills.find(x => x.id === billId && x.status === 'open'); if (b) { fn(b, d); save(d); } render(); };
   root.addEventListener('click', e => {
-    if (e.target.closest('[data-close]')) { $('#rcDlg').close(); return; }
+    if (e.target.closest('[data-close]')) { $('#rcDlg').close(); if (can('r', 'pos-tables')) go('pos-tables'); return; } // จบบิล → กลับผังโต๊ะ
     const id = e.target.closest('button')?.id;
     if (id === 'cpApply') {
       const d = load(), b = d.bills.find(x => x.id === billId), code = $('#coupon').value.trim().toUpperCase();
@@ -263,6 +282,7 @@ function billPage() {
       Object.assign(b, { status: 'paid', paidAt: Date.now(), cashier: me, paid: final,
         payment: { method, received, change: Math.round((received - final.total) * 100) / 100 } });
       save(d); setCur('');
+      $('#rcDone').innerHTML = `${ic('check')}<div><b>ชำระเงินแล้ว ${money(final.total)}</b>${method === 'cash' ? `<span>เงินทอน <b class="mono">${money(b.payment.change)}</b></span>` : `<span>${PAY[method]}</span>`}</div>`;
       $('#rcBody').innerHTML = receipt(b); $('#rcDlg').showModal();
       billId = fill(); render();
     }
@@ -272,8 +292,8 @@ function billPage() {
 
 /* ---------- รายงานยอดขาย POS ---------- */
 function reportPage() {
-  root.innerHTML = head('รายงานยอดขาย (POS)', 'สรุปจากบิลที่ชำระแล้ว', `<div class="rp-actions"><input type="date" id="from"><input type="date" id="to">
-    <button class="btn btn-ghost" id="btnIcs" data-perm="w" title="ส่งยอดขายเมนูไปเป็นประวัติในหน้าคำนวณวัตถุดิบ">ส่งไปคำนวณวัตถุดิบ</button></div>`) + `
+  root.innerHTML = UI.head(PAGE, `<button class="btn btn-neutral" id="btnIcs" data-perm="w" title="ส่งยอดขายเมนูไปเป็นประวัติในหน้าคำนวณวัตถุดิบ">${ic('calc')} ส่งไปคำนวณวัตถุดิบ</button>`) + `
+  <div class="pos-range"><div class="chips" id="presets"></div><span class="rp-actions"><input type="date" id="from" aria-label="ตั้งแต่"> – <input type="date" id="to" aria-label="ถึง"></span></div>
   <section class="rp-stats pos-stats">
     <div class="rp-stat"><small>บิล</small><b id="sBills"></b></div><div class="rp-stat"><small>ยอดขายสุทธิ</small><b id="sNet"></b></div>
     <div class="rp-stat"><small>ส่วนลด</small><b id="sDisc"></b></div><div class="rp-stat"><small>เฉลี่ย/บิล</small><b id="sAvg"></b></div>
@@ -288,12 +308,16 @@ function reportPage() {
     <tbody id="rows"></tbody></table></div></section>
   <dialog id="rcDlg" class="ad-dlg"><div id="rcBody"></div><div class="ad-btns pos-noprint"><button class="btn btn-ghost" onclick="print()">พิมพ์</button><button class="btn btn-primary" data-close>ปิด</button></div></dialog>`;
   $('#from').value = $('#to').value = today();
+  // ช่วงวันด่วน: [ป้าย, from, to]
+  const ago = n => { const x = new Date(); x.setDate(x.getDate() - n); return x.toLocaleDateString('sv-SE'); };
+  const PRESETS = [['วันนี้', today(), today()], ['เมื่อวาน', ago(1), ago(1)], ['7 วันล่าสุด', ago(6), today()], ['เดือนนี้', today().slice(0, 8) + '01', today()]];
   const bars = rows => { const max = Math.max(1, ...rows.map(r => r.v));
     return rows.map(r => `<div class="lbl" title="${esc(r.k)}">${esc(r.k)}</div><div class="track"><div class="bar" style="width:${Math.max(0.5, r.v / max * 100)}%"></div><span class="val">${r.label}</span></div>`).join('') || '<div class="none">ไม่มีข้อมูล</div>'; };
   const group = (arr, key, val) => { const m = new Map(); arr.forEach(x => { const k = key(x); m.set(k, (m.get(k) || 0) + val(x)); }); return m; };
   let paid = [];
   function render() {
     const from = $('#from').value, to = $('#to').value;
+    $('#presets').innerHTML = PRESETS.map(([l, f, t], i) => `<button class="chip${f === from && t === to ? ' on' : ''}" data-preset="${i}">${l}</button>`).join('');
     paid = load().bills.filter(b => b.status === 'paid' && dkey(b.paidAt) >= from && dkey(b.paidAt) <= to).sort((a, b) => b.paidAt - a.paidAt);
     const net = paid.reduce((s, b) => s + b.paid.total, 0), disc = paid.reduce((s, b) => s + b.paid.discount, 0);
     $('#sBills').textContent = fmt(paid.length); $('#sNet').textContent = money(net); $('#sDisc').textContent = money(disc); $('#sAvg').textContent = money(paid.length ? net / paid.length : 0);
@@ -309,18 +333,20 @@ function reportPage() {
   }
   root.addEventListener('click', e => {
     if (e.target.closest('[data-close]')) return $('#rcDlg').close();
+    const p = e.target.closest('[data-preset]');
+    if (p) { [, $('#from').value, $('#to').value] = PRESETS[p.dataset.preset]; return render(); }
     const rc = e.target.closest('[data-rc]');
     if (rc) { e.preventDefault(); $('#rcBody').innerHTML = receipt(paid.find(b => b.id === rc.dataset.rc)); $('#rcDlg').showModal(); }
   });
   // ส่งยอดขายเมนูไปเป็น 1 รายการในประวัติของหน้าคำนวณวัตถุดิบ (รูปแบบเดียวกับไฟล์ POS ที่อัปโหลด)
   $('#btnIcs').onclick = () => {
-    if (!paid.length) return alert('ไม่มีบิลในช่วงนี้');
+    if (!paid.length) return toast('ไม่มีบิลในช่วงวันที่เลือก');
     const qty = group(paid.flatMap(b => b.items), i => i.menu, i => i.qty);
     const from = $('#from').value, to = $('#to').value, name = `POS ${from}${from === to ? '' : ' ถึง ' + to}`;
     let h = []; try { h = JSON.parse(localStorage.getItem('ics-history') || '[]'); } catch (_) {}
     h.unshift({ id: Date.now().toString(36), ts: Date.now(), fileName: name, sheet: 'ระบบหน้าร้าน', rowCount: qty.size, sales: [...qty].map(([d, q]) => ({ d, q })) });
     localStorage.setItem('ics-history', JSON.stringify(h.slice(0, 15))); // HISTORY_MAX ใน app.js
-    alert(`ส่ง "${name}" (${qty.size} เมนู) ไปที่ประวัติของหน้าคำนวณวัตถุดิบแล้ว`);
+    toast(`ส่ง "${name}" (${qty.size} เมนู) ไปที่ประวัติของหน้าคำนวณวัตถุดิบแล้ว`);
   };
   $('#from').onchange = $('#to').onchange = render;
   render();
@@ -328,9 +354,9 @@ function reportPage() {
 
 /* ---------- คูปองส่วนลด ---------- */
 function couponsPage() {
-  root.innerHTML = head('คูปองส่วนลด', 'ส่วนลดเป็น % หรือจำนวนเงิน กำหนดยอดขั้นต่ำ วันหมดอายุ และจำนวนครั้งได้', '<button class="btn btn-primary" id="btnNew" data-perm="w">+ เพิ่มคูปอง</button>') + `
+  root.innerHTML = UI.head(PAGE, `<button class="btn btn-primary" id="btnNew" data-perm="w">${ic('plus')} เพิ่มคูปอง</button>`) + `
   <section class="rp-card"><div class="tbl-wrap"><table class="tbl">
-    <thead><tr><th>รหัส</th><th>ส่วนลด</th><th class="num">ขั้นต่ำ</th><th>หมดอายุ</th><th class="num">ใช้แล้ว</th><th>เปิดใช้</th><th></th></tr></thead>
+    <thead><tr><th>รหัส</th><th>ส่วนลด</th><th class="num">ขั้นต่ำ</th><th>หมดอายุ</th><th class="num">ใช้แล้ว</th><th>สถานะ</th><th>เปิดใช้</th><th></th></tr></thead>
     <tbody id="rows"></tbody></table></div></section>
   <dialog id="dlg" class="ad-dlg"><form id="form">
     <h2 id="dlgTitle"></h2>
@@ -351,10 +377,11 @@ function couponsPage() {
     $('#rows').innerHTML = d.coupons.map(c => { const expired = c.expires && today() > c.expires, full = c.limit && c.used >= c.limit;
       return `<tr><td class="mono"><b>${esc(c.code)}</b><br><small class="muted">${esc(c.note)}</small></td><td>${disc(c)}</td><td class="num mono">${c.min ? money(c.min) : '-'}</td>
       <td>${c.expires ? `<span class="${expired ? 'inv-neg' : ''}">${c.expires}${expired ? ' (หมดอายุ)' : ''}</span>` : '-'}</td>
-      <td class="num mono">${c.used}${c.limit ? ' / ' + c.limit : ''}${full ? ' <span class="inv-neg">ครบ</span>' : ''}</td>
+      <td class="num mono">${c.used}${c.limit ? ' / ' + c.limit : ''}</td>
+      <td>${!c.active ? '<span class="badge">ปิดอยู่</span>' : expired ? '<span class="badge st-warn">หมดอายุ</span>' : full ? '<span class="badge st-warn">ใช้ครบแล้ว</span>' : '<span class="badge st-good">ใช้ได้</span>'}</td>
       <td><input type="checkbox" data-toggle="${esc(c.code)}"${c.active ? ' checked' : ''}${canW ? '' : ' disabled'}></td>
-      <td class="ad-act"><button class="btn btn-ghost" data-edit="${esc(c.code)}" data-perm="w">แก้ไข</button><button class="btn btn-ghost ad-del" data-del="${esc(c.code)}" data-perm="d">ลบ</button></td></tr>`; }).join('')
-      || '<tr><td colspan="7" class="inv-empty">ยังไม่มีคูปอง</td></tr>';
+      <td class="ad-act"><button class="btn btn-ghost btn-sm" data-edit="${esc(c.code)}" data-perm="w">${ic('edit')} แก้ไข</button><button class="btn btn-ghost btn-sm ad-del" data-del="${esc(c.code)}" data-perm="d" title="ลบ" aria-label="ลบ ${esc(c.code)}">${ic('trash')}</button></td></tr>`; }).join('')
+      || `<tr><td colspan="8"><div class="empty">${ic('ticket')}ยังไม่มีคูปอง</div></td></tr>`;
   }
   function open(code) {
     const c = load().coupons.find(x => x.code === code); editing = c ? c.code : null;
@@ -379,15 +406,16 @@ function couponsPage() {
     if (ed) open(ed.dataset.edit);
     if (del && confirm(`ลบคูปอง ${del.dataset.del}?`)) { const d = load(); d.coupons = d.coupons.filter(c => c.code !== del.dataset.del); save(d); render(); }
   });
-  root.addEventListener('change', e => { const t = e.target.dataset.toggle; if (t) { const d = load(); d.coupons.find(c => c.code === t).active = e.target.checked; save(d); } });
+  root.addEventListener('change', e => { const t = e.target.dataset.toggle; if (t) { const d = load(); d.coupons.find(c => c.code === t).active = e.target.checked; save(d); render(); toast(`${t} ${e.target.checked ? 'เปิด' : 'ปิด'}ใช้งานแล้ว`); } });
   $('#btnNew').onclick = () => open(null);
   render();
 }
 
 /* ---------- เมนูและราคา ---------- */
 function menuPage() {
-  root.innerHTML = head('เมนูและราคา', 'ราคาตั้งต้นเป็นราคาตัวอย่าง แก้ราคาในช่องได้เลย · ชื่อเมนูควรตรงกับ Master เพื่อให้คำนวณวัตถุดิบได้', '<button class="btn btn-primary" id="btnNew" data-perm="w">+ เพิ่มเมนู</button>') + `
-  <section class="rp-card"><div class="rp-card-head"><div class="rp-actions"><input id="q" type="search" placeholder="ค้นหาเมนู"><select id="fc"></select></div><small class="muted" id="count"></small></div>
+  root.innerHTML = UI.head(PAGE, `<button class="btn btn-primary" id="btnNew" data-perm="w">${ic('plus')} เพิ่มเมนู</button>`) + `
+  <div class="pos-warn pos-tip">${ic('alert')} ราคาตั้งต้นเป็นราคาตัวอย่าง — แก้ในช่องราคาได้เลย บันทึกทันที · ชื่อเมนูควรตรงกับ Master เพื่อให้คำนวณวัตถุดิบได้</div>
+  <section class="rp-card"><div class="rp-card-head"><div class="rp-actions"><input id="q" class="inv-q" type="search" placeholder="ค้นหาเมนู"><select id="fc"></select></div><small class="muted" id="count"></small></div>
     <div class="tbl-wrap"><table class="tbl"><thead><tr><th>เมนู</th><th>หมวด</th><th class="num">ราคา</th><th>ขาย</th><th></th></tr></thead><tbody id="rows"></tbody></table></div></section>
   <dialog id="dlg" class="ad-dlg"><form id="form"><h2>เพิ่มเมนู</h2>
     <label>ชื่อเมนู<input name="name" required maxlength="80" list="masterMenus"></label>
@@ -403,16 +431,16 @@ function menuPage() {
     $('#catList').innerHTML = cats.map(c => `<option value="${esc(c)}">`).join('');
     const list = d.menu.filter(m => (!fc || m.cat === fc) && (!q || norm(m.name).includes(q)));
     $('#count').textContent = `${list.length} / ${d.menu.length} เมนู`;
-    $('#rows').innerHTML = list.map(m => `<tr><td>${esc(m.name)}</td><td><span class="badge">${esc(m.cat)}</span></td>
+    $('#rows').innerHTML = list.map(m => `<tr${m.active ? '' : ' class="pos-off"'}><td>${esc(m.name)}</td><td><span class="badge">${esc(m.cat)}</span></td>
       <td class="num"><input class="inv-count num" type="number" min="0" step="any" value="${m.price}" data-price="${m.id}"${canW ? '' : ' disabled'}></td>
       <td><input type="checkbox" data-active="${m.id}"${m.active ? ' checked' : ''}${canW ? '' : ' disabled'}></td>
-      <td class="ad-act"><button class="btn btn-ghost ad-del" data-del="${m.id}" data-perm="d">ลบ</button></td></tr>`).join('') || '<tr><td colspan="5" class="inv-empty">ไม่พบเมนู</td></tr>';
+      <td class="ad-act"><button class="btn btn-ghost btn-sm ad-del" data-del="${m.id}" data-perm="d" title="ลบ" aria-label="ลบ ${esc(m.name)}">${ic('trash')}</button></td></tr>`).join('') || `<tr><td colspan="5"><div class="empty">${ic('utensils')}ไม่พบเมนู</div></td></tr>`;
   }
   root.addEventListener('change', e => {
     const { price, active } = e.target.dataset; if (!price && !active) return;
     const d = load(), m = d.menu.find(x => x.id === (price || active));
-    if (price) m.price = Math.max(0, +e.target.value || 0); else m.active = e.target.checked;
-    save(d); toast(`บันทึก ${m.name}`);
+    if (price) m.price = Math.max(0, +e.target.value || 0); else { m.active = e.target.checked; e.target.closest('tr').classList.toggle('pos-off', !m.active); }
+    save(d); toast(price ? `${m.name} ราคา ${money(m.price)}` : `${m.name} ${m.active ? 'เปิดขาย' : 'ปิดขาย'}แล้ว`);
   });
   root.addEventListener('click', e => {
     if (e.target.closest('[data-close]')) return $('#dlg').close();
@@ -433,6 +461,5 @@ function menuPage() {
   render();
 }
 
-root.addEventListener('click', e => { const g = e.target.closest('[data-go]'); if (g) { e.preventDefault(); go(g.dataset.go); } });
 ({ 'pos-tables': tablesPage, 'pos-order': orderPage, 'pos-bill': billPage, 'pos-report': reportPage, 'pos-coupons': couponsPage, 'pos-menu': menuPage })[PAGE]();
 })();

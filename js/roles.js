@@ -2,7 +2,7 @@
 const $ = s => document.querySelector(s);
 const esc = s => String(s ?? '').replace(/[&<>"]/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
 const canW = ICS_AUTH.can('roles', 'w');
-const P = ['r', 'w', 'd'];
+const P = ['r', 'w', 'd'], GROUPS = [...new Set(DB.PAGES.map(p => p.group))];
 
 function render() {
   const db = DB.load();
@@ -13,14 +13,14 @@ function render() {
       <div class="rp-card-head">
         <div class="ad-rname">
           <input class="ad-name" value="${esc(r.name)}" maxlength="40"${canW ? '' : ' disabled'} aria-label="ชื่อ role">
-          <small class="muted mono">${esc(r.id)} · ผู้ใช้ ${n} คน${locked ? ' · ล็อกสิทธิ์ทุกหน้า' : ''}</small>
+          <small class="muted">ผู้ใช้ ${n} คน · ${locked ? 'ทุกหน้า (ล็อกไว้ แก้ไม่ได้)' : `เข้าได้ ${DB.PAGES.filter(p => r.perms[p.id]).length} / ${DB.PAGES.length} หน้า`}</small>
         </div>
-        ${locked ? '' : `<button class="btn btn-ghost ad-del" data-del data-perm="d"${n ? ` disabled title="มีผู้ใช้ ${n} คนใช้ role นี้อยู่"` : ''}>ลบ role</button>`}
+        ${locked ? '' : `<button class="btn btn-ghost btn-sm ad-del" data-del data-perm="d"${n ? ` disabled title="มีผู้ใช้ ${n} คนใช้ role นี้อยู่ — ย้ายผู้ใช้ไป role อื่นก่อน"` : ' title="ลบ role"'}>${UI.icon('trash')} ลบ</button>`}
       </div>
       <table class="tbl ad-perm">
         <thead><tr><th>หน้า</th><th>R</th><th>W</th><th>D</th></tr></thead>
-        <tbody>${DB.PAGES.map(p => `<tr><td>${esc(p.name)}</td>${P.map(x =>
-          `<td><input type="checkbox" data-page="${p.id}" data-p="${x}"${locked || (r.perms[p.id] || '').includes(x) ? ' checked' : ''}${dis} aria-label="${esc(p.name)} ${x.toUpperCase()}"></td>`).join('')}</tr>`).join('')}
+        <tbody>${GROUPS.map(g => `<tr class="ad-grp"><td colspan="4">${g}</td></tr>` + DB.PAGES.filter(p => p.group === g).map(p => `<tr><td>${UI.icon(p.icon)} ${esc(p.name)}</td>${P.map(x =>
+          `<td><input type="checkbox" data-page="${p.id}" data-p="${x}"${locked || (r.perms[p.id] || '').includes(x) ? ' checked' : ''}${dis} aria-label="${esc(p.name)} ${x.toUpperCase()}"></td>`).join('')}</tr>`).join('')).join('')}
         </tbody>
       </table>
     </section>`;
@@ -58,7 +58,7 @@ $('#addForm').addEventListener('submit', e => {
   let id = name.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '') || 'role-' + Date.now().toString(36);
   while (db.roles.some(r => r.id === id)) id += '-2';
   db.roles.push({ id, name, perms: {} }); DB.save(db);
-  e.target.reset(); render();
+  e.target.reset(); render(); UI.toast(`เพิ่ม role ${name} แล้ว — ติ๊กสิทธิ์ในการ์ดด้านล่าง`);
 });
 render();
 })();

@@ -6,10 +6,11 @@
 <title>Maison Roru Login</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans+Thai:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500;600&display=swap">
-<link rel="stylesheet" href="css/style.css?v=20261003230">
+<link rel="stylesheet" href="css/style.css?v=20261003539">
 
-<script src="js/db.js?v=20261003230"></script>
-<script src="js/auth.js?v=20261003230"></script>
+<script src="js/db.js?v=20261003539"></script>
+<script src="js/auth.js?v=20261003539"></script>
+<script src="js/ui.js?v=20261003539"></script>
 <script>if (ICS_AUTH.ok()) location.replace('index.html' + location.hash); else if (top !== self) top.location.replace('login.html' + location.hash);</script>
 </head>
 <body>
@@ -17,29 +18,46 @@
   <form id="gateForm" class="w-full max-w-sm rounded-2xl border border-line bg-surface p-6 sm:p-7 flex flex-col gap-4" style="box-shadow:var(--shadow)">
     <div>
       <div class="eyebrow">Maison Roru · ICONSIAM · S102</div>
-      <h1 class="text-xl font-semibold mt-1">คำนวณการใช้วัตถุดิบ</h1>
-      <p class="text-muted text-sm mt-1">ใส่รหัสผ่านเพื่อเข้าใช้งาน</p>
+      <h1 class="text-xl font-semibold mt-1">เข้าสู่ระบบ</h1>
+      <p class="text-muted text-sm mt-1">ระบบร้าน: ครัว · หน้าร้าน · คลังสินค้า</p>
     </div>
     <label class="flex flex-col gap-1.5 text-sm">
       <span class="font-medium">ชื่อผู้ใช้</span>
-      <input id="gateUser" type="text" autocomplete="username" autofocus class="px-3 py-2.5 rounded-lg border border-line bg-bg text-base" required>
+      <input id="gateUser" type="text" autocomplete="username" autocapitalize="none" spellcheck="false" autofocus class="px-3 py-2.5 rounded-lg border border-line bg-bg text-base" required>
     </label>
     <label class="flex flex-col gap-1.5 text-sm">
       <span class="font-medium">รหัสผ่าน</span>
-      <input id="gatePwd" type="password" autocomplete="current-password" class="px-3 py-2.5 rounded-lg border border-line bg-bg text-base" required>
+      <span class="pwd">
+        <input id="gatePwd" type="password" autocomplete="current-password" class="px-3 py-2.5 rounded-lg border border-line bg-bg text-base" required>
+        <button type="button" class="btn btn-ghost btn-icon" id="togglePwd" aria-label="แสดงรหัสผ่าน" aria-pressed="false" data-icon="eye"></button>
+      </span>
+      <small id="caps" class="caps" hidden>Caps Lock เปิดอยู่</small>
     </label>
-    <div id="gateErr" class="text-sm text-accent" hidden>รหัสผ่านไม่ถูกต้อง ลองใหม่อีกครั้ง</div>
-    <button class="btn btn-primary btn-lg" data-icon="login"><span class="lbl">เข้าสู่ระบบ</span></button>
+    <div id="gateErr" class="text-sm text-accent" role="alert" hidden>ชื่อผู้ใช้หรือรหัสผ่านไม่ถูกต้อง ลองใหม่อีกครั้ง</div>
+    <button class="btn btn-primary btn-lg" id="btnLogin" data-icon="login">เข้าสู่ระบบ</button>
   </form>
 </div>
+<style>
+  .pwd{position:relative;display:block} .pwd input{width:100%;box-sizing:border-box;padding-right:44px}
+  .pwd .btn{position:absolute;right:4px;top:50%;transform:translateY(-50%)}
+  .caps{color:var(--warn);font-weight:600}
+</style>
 <script>
 // login สำเร็จ → กลับไปหน้าที่ขอไว้ (#material, #report) ผ่าน index.html เท่านั้น
 const $ = s => document.querySelector(s);
 $('#gateForm').addEventListener('submit', async e => {
   e.preventDefault();
-  if (await ICS_AUTH.login($('#gateUser').value.trim(), $('#gatePwd').value)) location.replace('index.html' + location.hash);
-  else { $('#gateErr').hidden = false; $('#gatePwd').select(); }
+  $('#btnLogin').disabled = true; $('#gateErr').hidden = true;
+  if (await ICS_AUTH.login($('#gateUser').value.trim(), $('#gatePwd').value)) return location.replace('index.html' + location.hash);
+  $('#btnLogin').disabled = false; $('#gateErr').hidden = false; $('#gatePwd').select();
 });
+$('#togglePwd').onclick = e => {
+  const show = $('#gatePwd').type === 'password', b = e.currentTarget;
+  $('#gatePwd').type = show ? 'text' : 'password';
+  b.setAttribute('aria-pressed', show); b.setAttribute('aria-label', show ? 'ซ่อนรหัสผ่าน' : 'แสดงรหัสผ่าน');
+  b.innerHTML = UI.icon(show ? 'eyeOff' : 'eye'); $('#gatePwd').focus();
+};
+['keydown', 'keyup'].forEach(t => $('#gatePwd').addEventListener(t, e => { $('#caps').hidden = !e.getModifierState?.('CapsLock'); }));
 </script>
 </body>
 </html>

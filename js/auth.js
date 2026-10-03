@@ -51,7 +51,8 @@ const ICS_AUTH = (() => {
     guard(page) {
       if (!session()) return go('login.html' + (page ? '#' + page : location.hash), 'ไม่พบ session (cookie ไม่ตรงกับข้อมูลผู้ใช้)');
       if (!page) return;
-      if (!can(page, 'r')) return go('index.html', `ไม่มีสิทธิ์อ่านหน้า ${page}`);
+      // หน้าที่ไม่อยู่ใน DB.PAGES (เช่น home) แค่ต้อง login
+      if (DB.PAGES.some(p => p.id === page) && !can(page, 'r')) return go('index.html', `ไม่มีสิทธิ์อ่านหน้า ${page}`);
       if (top === self) return go('index.html#' + page, 'เปิดหน้าตรง ไม่ได้อยู่ใน CMS');
       if (!can(page, 'w')) document.documentElement.classList.add('no-w');
       if (!can(page, 'd')) document.documentElement.classList.add('no-d');

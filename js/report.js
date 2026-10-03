@@ -1,7 +1,7 @@
 (() => {
 const $ = s => document.querySelector(s);
 const esc = s => String(s ?? '').replace(/[&<>"]/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
-const norm = s => String(s ?? '').normalize('NFD').replace(/[̀-ͯ]/g,'').trim().replace(/\s+/g,' ').toLowerCase(); // เหมือน app.js
+const norm = s => String(s ?? '').normalize('NFD').replace(/[\u0300-\u036f]/g,'').trim().replace(/\s+/g,' ').toLowerCase(); // เหมือน app.js
 const fmt = n => n.toLocaleString('th-TH', {maximumFractionDigits: 2});
 const when = ts => new Date(ts).toLocaleString('th-TH', {dateStyle: 'medium', timeStyle: 'short'});
 

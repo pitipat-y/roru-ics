@@ -14,18 +14,28 @@
   };
   document.getElementById('scrim').onclick = () => app.classList.remove('open');
 
-  // deeplink: index.html#report → เปิด report.html; รับเฉพาะชื่อที่มีในเมนูและมีสิทธิ์อ่าน (ไม่ใช่ path อิสระ)
+  // เมนู: หน้าหลัก + หน้าที่มีสิทธิ์อ่าน จัดกลุ่ม/เรียงตาม DB.PAGES
+  const pages = [UI.page('home'), ...DB.PAGES.filter(p => ICS_AUTH.can(p.id, 'r'))];
+  const link = p => `<a href="#${p.id}" title="${p.name}">${UI.icon(p.icon)}<span>${p.name}</span></a>`;
+  side.insertAdjacentHTML('afterbegin', link(pages[0]) + [...new Set(pages.slice(1).map(p => p.group))]
+    .map(g => `<div class="nav-g"><div class="nav-h">${g}</div>${pages.filter(p => p.group === g).map(link).join('')}</div>`).join(''));
+
+  // deeplink: index.html#report → เปิด report.html; รับเฉพาะหน้าที่อยู่ในเมนู (ไม่ใช่ path อิสระ)
+  // ไม่มี hash → หน้าที่เปิดล่าสุดของผู้ใช้คนนี้ (ถ้ายังมีสิทธิ์) ไม่งั้นหน้าหลัก — แยกต่อผู้ใช้ เพราะเครื่องหน้าร้านใช้ร่วมกัน
+  const LAST = 'cms-last:' + ICS_AUTH.session().user.username;
   const frame = document.querySelector('iframe');
-  side.querySelectorAll('a').forEach(a => { if (!ICS_AUTH.can(a.hash.slice(1), 'r')) a.remove(); });
-  side.querySelectorAll('.nav-g').forEach(g => { if (!g.querySelector('a')) g.remove(); });
   const route = () => {
     const links = [...side.querySelectorAll('a')];
-    if (!links.length) { frame.hidden = true; document.getElementById('noaccess').hidden = false; return; }
-    const a = links.find(x => x.hash === location.hash) || links[0];
+    let a = links.find(x => x.hash === location.hash);
+    if (!a) { a = links.find(x => x.hash === '#' + get(LAST)) || links[0]; history.replaceState(null, '', a.hash); }
+    set(LAST, a.hash.slice(1));
     links.forEach(x => x.toggleAttribute('aria-current', x === a));
-    if (a === links[0] && location.hash !== a.hash) history.replaceState(null, '', a.hash);
-    document.getElementById('pageTitle').textContent = a.textContent;
-    const src = a.hash.slice(1) + '.html';
+    const p = UI.page(a.hash.slice(1));
+    document.getElementById('crumbIcon').innerHTML = UI.icon(p.icon);
+    document.getElementById('pageGroup').textContent = p.id === 'home' ? 'Maison Roru' : 'Maison Roru · ' + p.group;
+    document.getElementById('pageTitle').textContent = p.name;
+    document.title = `${p.name} · Maison Roru`;
+    const src = p.id + '.html';
     // replace = ไม่เพิ่ม history ของ iframe, ปุ่ม back ย้อนตาม hash อย่างเดียว
     try { if (!frame.contentWindow.location.href.endsWith('/' + src)) frame.contentWindow.location.replace(src); } catch (_) { frame.src = src; }
     app.classList.remove('open');

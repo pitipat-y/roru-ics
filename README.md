@@ -7,15 +7,17 @@
 | ไฟล์ | หน้าที่ |
 |---|---|
 | `login.html` | หน้า login → กลับไปหน้าที่ขอไว้ (`#material`, `#report`) |
-| `js/db.js` | ฐานข้อมูลจำลอง: หน้า (`PAGES`), role, user (รหัสเก็บเป็น SHA-256) — แก้แล้วเก็บใน localStorage `ics-db` |
+| `js/db.js` | ฐานข้อมูลจำลอง: หน้า (`PAGES` = id, กลุ่ม, ไอคอน, ชื่อ, คำอธิบาย → ใช้สร้างเมนู/หัวหน้า/หน้าหลัก), role, user (รหัสเก็บเป็น SHA-256) — แก้แล้วเก็บใน localStorage `ics-db` |
+| `js/ui.js` | UI กลาง: ไอคอน (`UI.icon`), หัวหน้าจาก `PAGES` (`UI.head` / `<header data-page>`), `UI.toast`, ไปหน้าอื่น (`UI.go` / `data-go`), ส่งข้อมูลให้หน้าถัดไป (`UI.handoff` / `UI.take`) |
+| `home.html`, `js/home.js` | หน้าหลัก: งานที่รอทำ (PR รออนุมัติ, PO รอรับของ, บิลที่เปิด ฯลฯ) + การ์ดทุกเมนูที่มีสิทธิ์ |
 | `js/auth.js` | login/logout, `can(page, 'r'\|'w'\|'d')` + `guard()` ใส่ใน `<head>` ของทุกหน้าที่ต้อง login |
 | `users.html`, `js/users.js` | จัดการผู้ใช้: เพิ่ม/แก้/ลบ, กำหนด role |
 | `roles.html`, `js/roles.js` | สิทธิ์การใช้งาน: role × หน้า × R/W/D |
-| `css/admin.css` | style ของหน้า users/roles |
+| `css/admin.css` | ส่วนประกอบกลาง (หัวหน้า, ชิปตัวกรอง, แถบขั้นตอน, toast, หน้าหลัก) + style ของหน้า users/roles |
 | `pos-tables.html`, `pos-order.html`, `pos-bill.html`, `pos-report.html`, `pos-coupons.html`, `pos-menu.html` | หน้าร้าน (POS): เปลือก HTML ใช้ `js/pos.js` (เลือกโหมดจาก `data-type`) + `css/pos.css` |
 | `pr.html`, `po.html`, `stock-in.html`, `stock-out.html`, `stock.html`, `tracker.html` | ระบบคลัง: เปลือก HTML บรรทัดเดียว ใช้ `js/inv.js` (เลือกโหมดจาก `data-type`) + `css/inv.css` |
-| `index.html` | หน้าแรก (CMS): แถบหัว, เมนูซ้าย และ iframe เปิดหน้าตามเมนู |
-| `css/cms.css`, `js/cms.js` | style และ logic ของ CMS (hamburger, ปรับความกว้างแถบเมนู, user menu) |
+| `index.html` | หน้าแรก (CMS): แถบหัว, เมนูซ้าย (สร้างจาก `DB.PAGES` ตามสิทธิ์) และ iframe เปิดหน้าตามเมนู |
+| `css/cms.css`, `js/cms.js` | style และ logic ของ CMS (เมนูพร้อมไอคอน, ย่อเป็นแถบไอคอน/ลากปรับความกว้าง, breadcrumb, user menu) |
 | `report.html`, `css/report.css`, `js/report.js` | รายงานการขาย: รวมยอดจากประวัติ (ชื่อไฟล์ซ้ำใช้อันล่าสุด) + แผนภูมิแท่ง CSS |
 | `material.html` | หน้าคำนวณวัตถุดิบ (เปิดผ่าน CMS เท่านั้น) |
 | `test.html` | redirect ไป `index.html#material` ให้ลิงก์เก่ายังใช้ได้ |
@@ -27,10 +29,8 @@
 
 ## Deeplink
 
-- `index.html#material` เปิดหน้าคำนวณวัตถุดิบ
-- `index.html#report` เปิดหน้ารายงานการขาย
-- ถ้าไม่ใส่ hash หรือใส่ชื่อที่ไม่มีในเมนู จะเปิดเมนูแรก
-- เพิ่มเมนูใหม่: เพิ่ม `<a href="#xxx">` ในแถบเมนูของ `index.html` แล้วจะเปิดไฟล์ `xxx.html`
+- `index.html#<id>` เปิดหน้า `<id>.html` เช่น `#material`, `#pos-tables`, `#home`
+- ไม่ใส่ hash / ใส่ชื่อที่ไม่มีในเมนู → หน้าที่ผู้ใช้คนนั้นเปิดล่าสุด (ถ้ายังมีสิทธิ์) ไม่งั้นหน้าหลัก
 
 ## แก้ Master ตั้งต้น
 
@@ -43,7 +43,7 @@
 ทุกครั้งที่แก้ css หรือ js ต้องเปลี่ยนเลข `?v=` ใน ทุกไฟล์ `.html` (ยกเว้น `test.html`) เพื่อไม่ให้มือถือใช้ไฟล์เก่าในแคช:
 
 ```sh
-V=$(date +%Y%m%d)$(printf %03d $((RANDOM%1000))); sed -i '' -E "s/\?v=[0-9]+/?v=$V/g" index.html login.html material.html report.html users.html roles.html pr.html po.html stock-in.html stock-out.html stock.html tracker.html pos-*.html
+V=$(date +%Y%m%d)$(printf %03d $((RANDOM%1000))); sed -i '' -E "s/\?v=[0-9]+/?v=$V/g" $(ls *.html | grep -v test.html)
 ```
 
 ## ข้อมูลที่เก็บในเบราว์เซอร์
@@ -65,6 +65,13 @@ V=$(date +%Y%m%d)$(printf %03d $((RANDOM%1000))); sed -i '' -E "s/\?v=[0-9]+/?v=
 - คูปอง: ลด % หรือบาท, ยอดขั้นต่ำ, วันหมดอายุ, จำกัดจำนวนครั้ง, เปิด/ปิด; ตัวอย่าง `WELCOME10`, `SAVE200`
 - รายการที่ส่งครัวแล้ว ลบได้เฉพาะคนที่มีสิทธิ์ D; ยกเลิกบิลต้องมีสิทธิ์ D
 - ข้อมูลเก็บใน localStorage `ics-pos` (เครื่องเดียว — แคชเชียร์กับพนักงานเสิร์ฟต้องใช้เครื่องเดียวกันจนกว่าจะมี backend)
+
+## ทางลัดระหว่างหน้า
+
+- หน้าหลัก: การ์ด "งานที่รอทำ" กดแล้วไปหน้านั้นพร้อมตัวกรอง (เช่น PR รออนุมัติ)
+- PR อนุมัติแล้ว → ปุ่ม **ออก PO** / PO รอรับของ → ปุ่ม **รับของ** (เปิดฟอร์มหน้าถัดไปพร้อมรายการ)
+- สต๊อก: ปุ่มดูความเคลื่อนไหว / ขอซื้อ ต่อแถว; ค้นหาวัตถุดิบ: ปุ่ม ขอซื้อ / รับเข้า / เบิกออก
+- ใช้ `UI.handoff(page, data)` → หน้าปลายทางอ่าน `UI.take(page)` (ใช้ครั้งเดียว หมดอายุ 30 วินาที)
 
 ## ระบบคลัง
 
@@ -100,7 +107,7 @@ PR (รออนุมัติ → อนุมัติ) → PO (รอรั�
 - ยังไม่ login → `login.html`; เปิด `material.html` ฯลฯ ตรง ๆ → เด้งเข้า CMS (`index.html#...`)
 - กันล็อกตัวเองออก: ลบ/เปลี่ยน role ตัวเองไม่ได้, ลบ role ที่มีผู้ใช้อยู่ไม่ได้, Administrator แก้สิทธิ์ไม่ได้
 - เปลี่ยนรหัสผ่านหรือลบผู้ใช้ → session เดิมของคนนั้นใช้ไม่ได้ทันที
-- หน้าใหม่: เพิ่มใน `DB.PAGES`, ใส่ `<script>ICS_AUTH.guard('ชื่อ')</script>` ใน `<head>` และเพิ่มลิงก์ `#ชื่อ` ในกลุ่มเมนู (`.nav-g`) ของ `index.html`
+- หน้าใหม่: เพิ่ม 1 บรรทัดใน `DB.PAGES` (id, group, icon จาก `js/ui.js`, name, desc) → เมนู/หน้าหลัก/ตารางสิทธิ์ขึ้นเอง; สร้าง `<id>.html` ที่มี `db.js` → `auth.js` → `<script>ICS_AUTH.guard('<id>')</script>` → `ui.js` ใน `<head>`
 
 ## ⚠️ ความปลอดภัย
 

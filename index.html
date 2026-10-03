@@ -4,12 +4,13 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
 <title>Maison Roru CMS</title>
-<script src="js/db.js?v=20261003230"></script>
-<script src="js/auth.js?v=20261003230"></script>
+<script src="js/db.js?v=20261003539"></script>
+<script src="js/auth.js?v=20261003539"></script>
 <script>ICS_AUTH.guard()</script>
+<script src="js/ui.js?v=20261003539"></script>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans+Thai:wght@400;500;600;700&display=swap">
-<link rel="stylesheet" href="css/style.css?v=20261003230">
-<link rel="stylesheet" href="css/cms.css?v=20261003230">
+<link rel="stylesheet" href="css/style.css?v=20261003539">
+<link rel="stylesheet" href="css/cms.css?v=20261003539">
 </head>
 <body>
 <div class="app" id="app">
@@ -17,7 +18,7 @@
     <button class="burger" id="burger" aria-label="เปิด/ปิดเมนู" aria-controls="side">
       <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M4 6h16M4 12h16M4 18h16"/></svg>
     </button>
-    <div><div class="eyebrow">Maison Roru</div><div class="font-semibold" id="pageTitle">คำนวณวัตถุดิบ</div></div>
+    <div class="crumb"><span id="crumbIcon"></span><div><div class="eyebrow" id="pageGroup">Maison Roru</div><div class="font-semibold" id="pageTitle"></div></div></div>
     <button class="user" id="user" popovertarget="userMenu" aria-label="บัญชีผู้ใช้" aria-haspopup="menu">
       <span class="avatar" data-initial></span>
       <span class="meta"><span class="text-sm font-semibold" data-name></span><small data-role></small></span>
@@ -25,46 +26,18 @@
     </button>
     <div id="userMenu" popover role="menu">
       <div class="who"><span class="avatar lg" data-initial></span><div><div class="font-semibold" data-name></div><small>เข้าสู่ระบบอยู่</small></div></div>
-      <button class="item danger" id="logout" role="menuitem">
-        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><path d="m16 17 5-5-5-5"/><path d="M21 12H9"/></svg>
-        ออกจากระบบ
-      </button>
+      <button class="item danger" id="logout" role="menuitem" data-icon="logout">ออกจากระบบ</button>
     </div>
   </header>
   <div class="body">
-    <nav class="side" id="side">
-      <div class="nav-g"><div class="nav-h">ครัว</div>
-        <a href="#material">คำนวณวัตถุดิบ</a>
-        <a href="#report">รายงานการขาย</a>
-      </div>
-      <div class="nav-g"><div class="nav-h">หน้าร้าน</div>
-        <a href="#pos-tables">รับลูกค้า</a>
-        <a href="#pos-order">สั่งออเดอร์</a>
-        <a href="#pos-bill">เช็คบิล</a>
-        <a href="#pos-report">รายงานยอดขาย</a>
-        <a href="#pos-coupons">คูปองส่วนลด</a>
-        <a href="#pos-menu">เมนูและราคา</a>
-      </div>
-      <div class="nav-g"><div class="nav-h">คลังสินค้า</div>
-        <a href="#tracker">ค้นหาวัตถุดิบ</a>
-        <a href="#stock">สต๊อกคงเหลือ / ตรวจนับ</a>
-        <a href="#pr">ใบขอซื้อ (PR)</a>
-        <a href="#po">ใบสั่งซื้อ (PO)</a>
-        <a href="#stock-in">รับเข้า</a>
-        <a href="#stock-out">เบิกออก</a>
-      </div>
-      <div class="nav-g"><div class="nav-h">ตั้งค่า</div>
-        <a href="#users">จัดการผู้ใช้</a>
-        <a href="#roles">สิทธิ์การใช้งาน</a>
-      </div>
-      <!-- เพิ่มเมนูอื่น: <a href="#xxx">ชื่อเมนู</a> → เปิด xxx.html, deeplink: index.html#xxx -->
+    <nav class="side" id="side" aria-label="เมนูหลัก">
+      <!-- เมนูสร้างจาก DB.PAGES (js/db.js) ตามสิทธิ์ใน js/cms.js -->
       <div class="grip" id="grip" title="ลากเพื่อปรับความกว้าง"></div>
     </nav>
     <div class="scrim" id="scrim"></div>
     <iframe name="main" title="เนื้อหา"></iframe>
-    <div class="noaccess" id="noaccess" hidden>บัญชีนี้ยังไม่มีสิทธิ์เข้าหน้าใด ติดต่อผู้ดูแลระบบ</div>
   </div>
 </div>
-<script src="js/cms.js?v=20261003230"></script>
+<script src="js/cms.js?v=20261003539"></script>
 </body>
 </html>

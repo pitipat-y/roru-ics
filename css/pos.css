@@ -40,7 +40,6 @@
 .pos-warn{padding:8px 12px;margin-bottom:10px;border-radius:8px;background:var(--warn-soft);color:var(--warn);font-size:14px}
 .pos-stats{grid-template-columns:repeat(4,1fr)}
 .pos-2col{display:grid;grid-template-columns:1fr 1fr;gap:0 16px}
-.pos-toast{position:fixed;left:50%;bottom:24px;transform:translateX(-50%);padding:10px 16px;border-radius:10px;background:var(--ink);color:var(--bg);font-size:14px;z-index:99;box-shadow:var(--shadow)}
 /* ใบเสร็จ */
 .pos-receipt{width:300px;max-width:100%;margin:0 auto;font-family:"IBM Plex Mono",monospace;font-size:13px}
 .pos-receipt table{width:100%;border-collapse:collapse;margin:8px 0}
@@ -52,4 +51,31 @@
   body *{visibility:hidden} #receipt,#receipt *{visibility:visible;color:#000!important}
   #receipt{position:fixed;left:0;top:0;width:72mm} .pos-noprint{display:none}
 }
-@media (max-width:900px){ .pos-order,.pos-checkout,.pos-2col{grid-template-columns:1fr} .pos-cart{position:static} .pos-stats{grid-template-columns:repeat(2,1fr)} }
+/* แถบสรุปโต๊ะ / การ์ดโต๊ะ */
+.pos-summary{display:flex;flex-wrap:wrap;gap:8px 20px;margin-top:16px;padding:12px 16px;border:1px solid var(--line);border-radius:12px;background:var(--surface);font-size:14px;color:var(--muted)}
+.pos-summary b{color:var(--ink);font-size:16px}
+.pos-tbl.tap{cursor:pointer} .pos-tbl.tap:hover{box-shadow:var(--shadow)}
+.pos-tbl small .ic{width:13px;height:13px;vertical-align:-2px}
+.pos-late{color:var(--accent);font-weight:600}
+.pos-tbl.free b .ic{width:18px;height:18px;vertical-align:-2px}
+/* ปุ่มเมนู: ป้ายจำนวนที่สั่งแล้ว */
+.pos-item{position:relative}
+.pos-item.in{border-color:var(--accent);background:color-mix(in srgb,var(--accent) 6%,var(--surface))}
+.pos-badge{position:absolute;top:-7px;right:-7px;min-width:22px;height:22px;padding:0 6px;box-sizing:border-box;display:grid;place-items:center;border-radius:999px;background:var(--accent);color:var(--accent-ink);font-style:normal;font-weight:700;font-size:12px;box-shadow:0 1px 3px rgba(0,0,0,.25)}
+/* มือถือ: แถบดูบิลติดล่าง */
+.pos-cartbar{display:none}
+/* เช็คบิล: ปุ่มรับเงินด่วน + สรุปหลังชำระ */
+.pos-quick{display:flex;flex-wrap:wrap;gap:6px}
+.pos-done{display:flex;align-items:center;gap:12px;margin-bottom:14px;padding:12px 14px;border-radius:12px;background:var(--good-soft);color:var(--good)}
+.pos-done .ic{width:28px;height:28px}
+.pos-done b{display:block;font-size:16px} .pos-done span{color:var(--ink)} .pos-done span b{display:inline;font-size:20px;color:var(--good)}
+/* รายงาน: ช่วงวัน */
+.pos-range{display:flex;flex-wrap:wrap;align-items:center;justify-content:space-between;gap:10px;margin-top:16px}
+.pos-range input{padding:7px 10px;border:1px solid var(--line);border-radius:8px;background:var(--bg);color:var(--ink);font:inherit}
+.pos-tip{display:flex;align-items:center;gap:8px;margin:16px 0 0}
+.pos-off td{opacity:.5} .pos-off td:last-child,.pos-off td:nth-child(4){opacity:1}
+@media (max-width:900px){
+  .pos-order,.pos-checkout,.pos-2col{grid-template-columns:1fr} .pos-cart{position:static} .pos-stats{grid-template-columns:repeat(2,1fr)}
+  .pos-cartbar:not([hidden]){display:flex;align-items:center;gap:8px;position:fixed;left:12px;right:12px;bottom:12px;z-index:20;padding:12px 16px;border:0;border-radius:14px;background:var(--accent);color:var(--accent-ink);font:inherit;font-weight:600;box-shadow:var(--shadow);cursor:pointer}
+  .pos-cartbar b{margin-left:auto} .pos-order{padding-bottom:64px}
+}

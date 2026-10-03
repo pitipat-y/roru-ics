@@ -24,15 +24,23 @@ html,body{height:100%;margin:0;overflow:hidden}
 #userMenu .item.danger{color:var(--accent)}
 @media (max-width:768px){ .user .meta{display:none} .user{padding-right:6px} }
 .body{flex:1;display:flex;min-height:0;position:relative}
-.side{--w:220px;width:var(--w);flex:none;background:var(--surface);border-right:1px solid var(--line);padding:12px;box-sizing:border-box;overflow:auto;position:relative;transition:margin-left .2s}
-.side a{display:block;padding:10px 12px;border-radius:8px;color:var(--ink);text-decoration:none;font-weight:500;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.side{--w:232px;width:var(--w);flex:none;background:var(--surface);border-right:1px solid var(--line);padding:12px;box-sizing:border-box;overflow:auto;position:relative;transition:width .2s,padding .2s}
+.side a{display:flex;align-items:center;gap:12px;padding:9px 12px;border-radius:8px;color:var(--ink);text-decoration:none;font-weight:500;white-space:nowrap}
+.side a .ic{width:19px;height:19px;flex:none;color:var(--muted)}
+.side a span{overflow:hidden;text-overflow:ellipsis}
+.side>a{margin-bottom:10px}
 .side a:hover{background:var(--sunken)}
-.side a[aria-current]{background:var(--accent-soft);color:var(--accent)}
+.side a[aria-current]{background:var(--accent-soft);color:var(--accent)} .side a[aria-current] .ic{color:var(--accent)}
 .grip{position:absolute;top:0;right:-3px;width:6px;height:100%;cursor:col-resize;touch-action:none}
 .grip:hover,.dragging .grip{background:var(--accent);opacity:.4}
-.dragging{user-select:none} .dragging iframe{pointer-events:none}
-.closed .side{margin-left:calc(-1 * var(--w))}
-.closed .side .grip{display:none}
+.dragging{user-select:none} .dragging iframe{pointer-events:none} .dragging .side{transition:none}
+/* จอใหญ่ ย่อเมนู = เหลือแถบไอคอน (ชี้ค้างดูชื่อ) */
+@media (min-width:769px){
+  .closed .side{width:64px;padding:12px 10px}
+  .closed .side a{justify-content:center;padding:10px 0}
+  .closed .side a span,.closed .nav-h,.closed .grip{display:none}
+  .closed .nav-g{border-top:1px solid var(--line);padding-top:8px;margin-bottom:8px}
+}
 iframe{flex:1;border:0;min-width:0;background:var(--bg)}
 .scrim{display:none}
 @media (max-width:768px){ /* มือถือ: เมนูเป็น drawer ซ้อนทับ, เริ่มต้นปิด */
@@ -41,6 +49,9 @@ iframe{flex:1;border:0;min-width:0;background:var(--bg)}
   .open .scrim{display:block;position:absolute;inset:0;z-index:9;background:rgba(0,0,0,.4)}
   .grip{display:none}
 }
-.noaccess{flex:1;display:grid;place-items:center;color:var(--muted);padding:24px;text-align:center}
 .nav-g{display:flex;flex-direction:column;gap:2px;margin-bottom:12px}
 .nav-h{padding:4px 12px;font-size:11px;font-weight:600;letter-spacing:.06em;text-transform:uppercase;color:var(--muted)}
+.crumb{display:flex;align-items:center;gap:10px;min-width:0}
+.crumb>div{min-width:0} .crumb #pageTitle{white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.crumb .ic{width:22px;height:22px;color:var(--accent);flex:none;display:block}
+#userMenu .item .ic{width:18px;height:18px}

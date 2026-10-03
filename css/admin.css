@@ -1,4 +1,4 @@
-/* หน้า users / roles — ใช้ร่วมกับ report.css (.rp, .rp-card) */
+/* ส่วนประกอบกลางของทุกหน้า (ยกเว้น material) + หน้า users / roles — ใช้ร่วมกับ report.css (.rp, .rp-card) */
 .ad-head{display:flex;flex-wrap:wrap;align-items:flex-end;justify-content:space-between;gap:12px}
 .mono{font-family:"IBM Plex Mono",monospace}
 .tbl-wrap{overflow-x:auto}
@@ -9,7 +9,7 @@
 .badge{display:inline-block;padding:2px 8px;border-radius:999px;font-size:12px;background:var(--sunken);color:var(--muted);border:1px solid var(--line)}
 .badge-accent{background:var(--accent-soft);color:var(--accent);border-color:transparent}
 .ad-warn{color:var(--warn);font-size:13px}
-.ad-act{text-align:right;white-space:nowrap}
+.ad-act{text-align:right;white-space:nowrap} .ad-act>*+*{margin-left:4px}
 .ad-del{color:var(--accent)}
 .btn:disabled{opacity:.4;cursor:not-allowed}
 .rp-actions input{min-width:0}
@@ -31,3 +31,47 @@
 .ad-perm th:not(:first-child),.ad-perm td:not(:first-child){text-align:center;width:44px}
 .ad-perm input{width:18px;height:18px;accent-color:var(--accent);cursor:pointer}
 .ad-perm input:disabled{cursor:not-allowed}
+/* หัวหน้า (UI.head / header[data-page]) */
+.ic{display:inline-block;width:18px;height:18px;flex:none;vertical-align:-3px} /* Tailwind preflight ตั้ง svg เป็น block */
+.ph{display:flex;align-items:flex-start;gap:14px;min-width:0}
+.ph-icon{width:46px;height:46px;flex:none;display:grid;place-items:center;border-radius:12px;background:var(--accent-soft);color:var(--accent)}
+.ph-icon .ic{width:24px;height:24px}
+.ph h1{margin:2px 0 0!important}
+.btn-sm{padding:.32rem .6rem;font-size:13px}
+.btn-sm .ic,.btn-sm svg{width:15px;height:15px}
+/* ตัวกรองแบบชิป + จำนวน */
+.chips{display:flex;flex-wrap:wrap;gap:6px}
+.chip{display:inline-flex;align-items:center;gap:6px;padding:6px 12px;border:1px solid var(--line);border-radius:999px;background:var(--surface);color:var(--ink);font:inherit;font-size:13px;cursor:pointer}
+.chip:hover{border-color:var(--muted)}
+.chip span{min-width:18px;padding:0 6px;border-radius:999px;background:var(--sunken);color:var(--muted);font-size:12px;text-align:center}
+.chip.on{background:var(--accent);border-color:var(--accent);color:var(--accent-ink)} .chip.on span{background:rgba(255,255,255,.25);color:inherit}
+.chip.warn span{background:var(--warn-soft);color:var(--warn)}
+/* ขั้นตอน PR → PO → รับเข้า */
+.flow{display:flex;align-items:stretch;gap:6px;margin-top:20px;flex-wrap:wrap}
+.flow-step{flex:1;min-width:150px;display:flex;align-items:center;gap:10px;padding:10px 14px;border:1px solid var(--line);border-radius:12px;background:var(--surface);color:var(--ink);font:inherit;text-align:left}
+button.flow-step{cursor:pointer} button.flow-step:hover{border-color:var(--accent)}
+.flow-step i{width:26px;height:26px;flex:none;display:grid;place-items:center;border-radius:50%;background:var(--sunken);font-style:normal;font-weight:700;font-size:13px}
+.flow-step b{display:block;font-size:14px} .flow-step small{color:var(--muted);font-size:12px}
+.flow-step small.has{color:var(--warn);font-weight:600}
+.flow-step.on{border-color:var(--accent);background:var(--accent-soft)} .flow-step.on i{background:var(--accent);color:var(--accent-ink)}
+.flow-arrow{display:grid;place-items:center;color:var(--muted)}
+@media (max-width:640px){ .flow-arrow{display:none} .flow-step{min-width:0;flex-basis:100%} }
+/* ว่าง + ปุ่มให้ทำต่อ */
+.empty{display:flex;flex-direction:column;align-items:center;gap:10px;padding:32px 16px;color:var(--muted);text-align:center}
+.empty .ic{width:32px;height:32px;opacity:.6}
+/* toast (UI.toast) */
+.toast{position:fixed;left:50%;bottom:24px;transform:translateX(-50%);max-width:calc(100vw - 32px);padding:10px 16px;border-radius:10px;background:var(--ink);color:var(--bg);font-size:14px;z-index:99;box-shadow:var(--shadow);animation:toast-in .2s}
+@keyframes toast-in{from{opacity:0;transform:translate(-50%,8px)}}
+/* หน้าหลัก */
+.hm-sec{margin-top:24px} .hm-sec>h2{font-size:15px;font-weight:600;margin:0 0 10px;color:var(--muted)}
+.hm-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(220px,1fr));gap:12px}
+.hm-card{display:flex;gap:12px;align-items:flex-start;padding:14px;border:1px solid var(--line);border-radius:14px;background:var(--surface);color:var(--ink);font:inherit;text-align:left;cursor:pointer;transition:border-color .15s,transform .1s}
+.hm-card:hover{border-color:var(--accent)} .hm-card:active{transform:scale(.99)}
+.hm-card .ph-icon{width:40px;height:40px;border-radius:10px} .hm-card .ph-icon .ic{width:20px;height:20px}
+.hm-card b{display:block;font-size:15px} .hm-card small{display:block;color:var(--muted);font-size:13px;line-height:1.45;margin-top:2px}
+.hm-todo .n{font-size:26px;font-weight:700;font-family:"IBM Plex Mono",monospace;line-height:1.1}
+.hm-todo.zero{opacity:.55} .hm-todo.warn .n{color:var(--accent)}
+.ad-grp td{padding:14px 10px 4px!important;font-size:11px;font-weight:600;letter-spacing:.06em;text-transform:uppercase;color:var(--muted)}
+.ad-perm td .ic{width:15px;height:15px;color:var(--muted);margin-right:4px}
+.ad-legend{display:flex;flex-wrap:wrap;align-items:center;gap:6px 18px;margin-top:16px;font-size:13px}
+.ad-legend b{display:inline-grid;place-items:center;width:20px;height:20px;margin-right:4px;border-radius:6px;background:var(--accent-soft);color:var(--accent);font-size:12px}
