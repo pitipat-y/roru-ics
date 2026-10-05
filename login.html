@@ -23,12 +23,12 @@
     </div>
     <label class="flex flex-col gap-1.5 text-sm">
       <span class="font-medium">ชื่อผู้ใช้</span>
-      <input id="gateUser" type="text" autocomplete="username" autocapitalize="none" spellcheck="false" autofocus class="px-3 py-2.5 rounded-lg border border-line bg-bg text-base" required>
+      <input id="gateUser" type="text" value="ics" autocomplete="username" autocapitalize="none" spellcheck="false" autofocus class="px-3 py-2.5 rounded-lg border border-line bg-bg text-base" required>
     </label>
     <label class="flex flex-col gap-1.5 text-sm">
       <span class="font-medium">รหัสผ่าน</span>
       <span class="pwd">
-        <input id="gatePwd" type="password" autocomplete="current-password" class="px-3 py-2.5 rounded-lg border border-line bg-bg text-base" required>
+        <input id="gatePwd" type="password" autocomplete="current-password" class="px-3 py-2.5 rounded-lg border border-line bg-bg text-base" required autofocus>
         <button type="button" class="btn btn-ghost btn-icon" id="togglePwd" aria-label="แสดงรหัสผ่าน" aria-pressed="false" data-icon="eye"></button>
       </span>
       <small id="caps" class="caps" hidden>Caps Lock เปิดอยู่</small>
@@ -44,6 +44,9 @@
 </style>
 <script>
 // login สำเร็จ → กลับไปหน้าที่ขอไว้ (#material, #report) ผ่าน index.html เท่านั้น
+window.addEventListener('DOMContentLoaded', () => {
+  document.getElementById('gatePwd').focus();
+});
 const $ = s => document.querySelector(s);
 $('#gateForm').addEventListener('submit', async e => {
   e.preventDefault();
