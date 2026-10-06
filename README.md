@@ -34,7 +34,7 @@
 
 ## แก้ Master ตั้งต้น
 
-1. แก้ `DEFAULT_MASTER` ใน `js/data.js`
+1. แก้ `DEFAULT_MASTER` ใน `js/data.js` **และ** ใน `<script>` ท้าย `material.html` (หน้านี้ hardcode สูตรไว้เอง ไม่โหลด `data.js`)
 2. เปลี่ยนวันที่ใน `MASTER_DEFAULT_NAME` ใน `js/app.js` เช่น `MaisonrRoru-ICS-03Oct69.xlsx`
 3. Bump version (ดูหัวข้อถัดไป)
 
