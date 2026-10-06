@@ -43,8 +43,10 @@
 ทุกครั้งที่แก้ css หรือ js ต้องเปลี่ยนเลข `?v=` ใน ทุกไฟล์ `.html` (ยกเว้น `test.html`) เพื่อไม่ให้มือถือใช้ไฟล์เก่าในแคช:
 
 ```sh
-V=$(date +%Y%m%d)$(printf %03d $((RANDOM%1000))); sed -i '' -E "s/\?v=[0-9]+/?v=$V/g" $(ls *.html | grep -v test.html)
+V=$(date +%Y%m%d)$(printf %03d $((RANDOM%1000))); sed -i '' -E "s/\?v=[0-9]+/?v=$V/g" $(ls *.html | grep -v test.html); echo $V > version.txt
 ```
+
+`version.txt` = เลขเวอร์ชันล่าสุด: `js/auth.js` เช็กไฟล์นี้ทุกครั้งที่เปิดหน้า ถ้าไม่ตรงกับ `?v=` ที่โหลดมา (เช่น LINE LIFF แคช .html เก่า) จะ reload ด้วย URL ใหม่เอง
 
 ## ข้อมูลที่เก็บในเบราว์เซอร์
 

@@ -59,3 +59,14 @@ const ICS_AUTH = (() => {
     },
   };
 })();
+
+// เลข ?v= ของ deploy นี้ (จาก src ของไฟล์นี้) — cms.js ใช้ต่อท้าย src ของ iframe
+const ICS_V = (document.currentScript?.src.match(/[?&]v=(\d+)/) || [])[1] || '';
+// LINE LIFF / เว็บวิวแคช .html นาน → เทียบกับ version.txt (no-store) ถ้าไม่ตรงโหลดใหม่ด้วย URL ที่มี ?v= ใหม่ ซึ่งแคชไม่มี
+if (ICS_V && location.protocol !== 'file:') fetch('version.txt', { cache: 'no-store' }).then(r => r.ok ? r.text() : '').then(v => {
+  v = v.trim();
+  if (!/^\d+$/.test(v) || v === ICS_V) return;
+  // ponytail: reload ครั้งเดียวต่อเวอร์ชันต่อแท็บ กันวนถ้าเว็บวิวยังให้ไฟล์เก่า
+  try { if (sessionStorage.getItem('ics-v') === v) return; sessionStorage.setItem('ics-v', v); } catch (_) { return; }
+  const u = new URL(location.href); u.searchParams.set('v', v); location.replace(u);
+}).catch(() => {});
