@@ -35,7 +35,7 @@
     document.getElementById('pageGroup').textContent = p.id === 'home' ? 'Maison Roru' : 'Maison Roru · ' + p.group;
     document.getElementById('pageTitle').textContent = p.name;
     document.title = `${p.name} · Maison Roru`;
-    const src = p.id + '.html' + (ICS_V && '?v=' + ICS_V);
+    const src = p.id + '.html?v=' + ICS_V; // ICS_V = เลขใน version.txt ตอน deploy (js/auth.js)
     // replace = ไม่เพิ่ม history ของ iframe, ปุ่ม back ย้อนตาม hash อย่างเดียว
     try { if (!frame.contentWindow.location.href.endsWith('/' + src)) frame.contentWindow.location.replace(src); } catch (_) { frame.src = src; }
     app.classList.remove('open');
