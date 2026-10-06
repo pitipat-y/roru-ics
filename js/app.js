@@ -35,7 +35,7 @@ const ic=n=>`<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-w
 const setLbl=(b,t)=>{ const l=b.querySelector('.lbl'); (l||b).textContent=t; };
 document.querySelectorAll('[data-icon]').forEach(el=>el.insertAdjacentHTML('afterbegin',ic(el.dataset.icon)));
 
-const MASTER_DEFAULT_NAME='MaisonrRoru-ICS-03Oct69.xlsx (ค่าเริ่มต้น)';
+const MASTER_DEFAULT_NAME='MaisonrRoru-ICS-06Oct69.xlsx (ค่าเริ่มต้น)';
 const MASTER_HISTORY_KEY='ics-master-history';
 const MASTER_ACTIVE_KEY='ics-master-active';
 const MASTER_HISTORY_MAX=15;
